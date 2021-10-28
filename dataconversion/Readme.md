@@ -1,6 +1,24 @@
 # Python Operator에서 Data Type 처리 예제
 
 ### 1. File to Python 처리
+#### 1.1 File Consumer Operator : table - message Type
+![](/dataconversion/images/0.FilePython.png)<br>
+
+    from io import StringIO
+    import pandas as pd
+
+    def on_input(msg):
+
+        data = StringIO(msg.body.decode("utf-8"))
+
+        df = pd.read_csv(data, sep=';')
+        result = df
+        csv = result.to_csv(sep=',', index=False)
+
+        api.send("output1", api.Message(attributes=msg.attributes, body=csv))
+
+    api.set_port_callback("input1", on_input)
+
 #### 1.1 Read File Operator : message.file - message Type
 ![](/dataconversion/images/1.FilePython.png)<br>
 
