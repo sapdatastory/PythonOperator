@@ -1,7 +1,7 @@
 # Python Operator에서 Data Type 처리 예제
 
 ### 1. File to Python 처리
-#### 1.1 message Data Type
+#### 1.1 Read File Operator : message.file - message Type
 ![](/dataconversion/images/1.FilePython.png)<br>
 
     from io import StringIO
@@ -19,7 +19,7 @@
 
     api.set_port_callback("input1", on_input)
 
-#### 1.2 string Data Type
+#### 1.2 Read File Operator : message.file - string Data Type
 ![](/dataconversion/images/2.FilePython.png)<br>
 
     from io import StringIO
@@ -39,7 +39,7 @@
 
 ### 2. HANA to Python 처리
 
-#### 2.1 Table Consumer Operator - table Type
+#### 2.1 Table Consumer Operator : table - message Type
 ![](/dataconversion/images/3.HanaPython.png)<br>
     
     from io import StringIO
@@ -57,7 +57,7 @@
 
     api.set_port_callback("input1", on_input)
 
-#### 2.2 HANA Client Operator - message Type
+#### 2.2 HANA Client Operator : message - message Type
 ![](/dataconversion/images/4.HanaPython.png)<br>
     
     from io import StringIO
@@ -75,8 +75,9 @@
 
     api.set_port_callback("input1", on_input)
 
-#### 2.3 HANA Client Operator - message.table Type
+#### 2.3 Run HANA SQL Operator : message.table - message Type
 ![](/dataconversion/images/5.HanaPython.png)<br>
+![](/dataconversion/images/5.HanaPython_Error.png)<br>
 
 from io import StringIO
 import pandas as pd
@@ -95,4 +96,6 @@ import pandas as pd
             #api.send("output1", csv)
 
         api.set_port_callback("input1", on_input)
+
+#### 2.4 Run HANA SQL Operator : message.table - string Type
 
