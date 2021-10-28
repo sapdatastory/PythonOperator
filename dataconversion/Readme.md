@@ -98,4 +98,19 @@ import pandas as pd
         api.set_port_callback("input1", on_input)
 
 #### 2.4 Run HANA SQL Operator : message.table - string Type
+![](/dataconversion/images/6.HanaPython.png)<br>
 
+        from io import StringIO
+        import pandas as pd
+
+        def on_input(msg):
+
+            data = StringIO(msg)
+
+            df = pd.read_csv(data, sep=',')
+            result = df
+            csv = result.to_csv(sep=',', index=False)
+
+            api.send("output1", csv)
+
+        api.set_port_callback("input1", on_input)
