@@ -38,8 +38,10 @@
     api.set_port_callback("input1", on_input)
 
 ### 2. HANA to Python 처리
+
 #### 2.1 Table Consumer Operator - table Type
 ![](/dataconversion/images/3.HanaPython.png)<br>
+    
     from io import StringIO
     import pandas as pd
 
@@ -58,7 +60,8 @@
     api.set_port_callback("input1", on_input)
 
 #### 2.2 HANA Client Operator - message Type
-    ![](/dataconversion/images/4.HanaPython.png)<br>
+![](/dataconversion/images/4.HanaPython.png)<br>
+    
     from io import StringIO
     import pandas as pd
 
