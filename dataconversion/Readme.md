@@ -1,6 +1,6 @@
 # Python Operator 처리 예제
 
-### 1. File to Python 처리
+## 1. File to Python 처리
 #### 1.1 Read File Operator : message.file - message Type
 ![](/dataconversion/images/1.FilePython.png)<br>
 Read File -> From File --> Python3 --> To File --> Write File --> Graph Terminator
@@ -59,7 +59,7 @@ Table To Message Converter에서 string 데이터 타입 변환 중 오류 발�
 
         api.set_port_callback("input1", on_input)
 
-### 2. HANA to Python 처리
+## 2. HANA to Python 처리
 
 #### 2.1 Table Consumer Operator : table - message Type
 ![](/dataconversion/images/3.HanaPython.png)<br>
