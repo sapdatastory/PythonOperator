@@ -3,7 +3,7 @@
 ## 1. File to Python 처리
 #### 1.1 Read File Operator : message.file - message Type
 ![](/dataconversion/images/1.FilePython.png)<br>
-Read File -> From File --> Python3 --> To File --> Write File --> Graph Terminator
+Read File --> From File --> Python3 --> To File --> Write File --> Graph Terminator
 
     from io import StringIO
     import pandas as pd
