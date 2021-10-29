@@ -142,3 +142,43 @@ Constant Generator --> Run HANA SQL --> ToString Converter --> Python3 --> To Fi
             api.send("output1", csv)
 
         api.set_port_callback("input1", on_input)
+
+## 3. Python to HANA 처리
+#### 3.1 HANA Client Operator : message - message Type
+![](/dataconversion/images/1.PythonHANA.png)<br>
+Read File --> From File --> Python3 --> HANA Client --> Graph Terminator
+
+    from io import StringIO
+    import pandas as pd
+
+    def on_input(msg):
+
+        data = StringIO(msg.body.decode("utf-8"))
+
+        df = pd.read_csv(data, sep=';')
+        result = df
+        csv = result.to_csv(sep=',', index=False)
+
+        api.send("output1", api.Message(attributes=msg.attributes, body=csv))
+
+    api.set_port_callback("input1", on_input)
+
+#### 3.2 Write HANA SQL Operator : message - message.table Type
+![](/dataconversion/images/1.PythonHANA.png)<br>
+Read File --> From File --> Python3 --> Write HANA SQL --> Graph Terminator
+
+    from io import StringIO
+    import pandas as pd
+
+    def on_input(msg):
+
+        data = StringIO(msg.body.decode("utf-8"))
+
+        df = pd.read_csv(data, sep=';')
+        result = df
+        csv = result.to_csv(sep=',', index=False)
+
+        api.send("output1", api.Message(attributes=msg.attributes, body=csv))
+
+    api.set_port_callback("input1", on_input)
+
