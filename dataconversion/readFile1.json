@@ -1,0 +1,179 @@
+{
+	"properties": {},
+	"description": "Coversion Example",
+	"processes": {
+		"readfile1": {
+			"component": "com.sap.file.read",
+			"metadata": {
+				"label": "Read File",
+				"x": 17,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"mode": "Once",
+					"connection": {
+						"configurationType": "System Management Files (\"/files/\")",
+						"vrepRoot": "/files/"
+					},
+					"path": "tmp/RunningTimes.csv"
+				}
+			}
+		},
+		"fromfile1": {
+			"component": "com.sap.file.fromFile",
+			"metadata": {
+				"label": "From File",
+				"x": 201.99999904632568,
+				"y": 27,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"python3operator1": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "Python3 Operator",
+				"x": 316.99999809265137,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {
+					"script": "from io import StringIO\nimport pandas as pd\n\ndef on_input(msg):\n\n    data = StringIO(msg.body.decode(\"utf-8\"))\n\n    df = pd.read_csv(data, sep=';')\n    result = df\n    csv = result.to_csv(sep=',', index=False)\n\n    api.send(\"output1\", api.Message(attributes=msg.attributes, body=csv))\n\napi.set_port_callback(\"input1\", on_input)\n"
+				},
+				"additionalinports": [
+					{
+						"name": "input1",
+						"type": "message"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output1",
+						"type": "message"
+					}
+				]
+			}
+		},
+		"writefile1": {
+			"component": "com.sap.file.write",
+			"metadata": {
+				"label": "Write File",
+				"x": 600.999997138977,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"connection": {
+						"configurationType": "System Management Files (\"/files/\")",
+						"vrepRoot": "/files/"
+					},
+					"pathMode": "Static (from configuration)",
+					"path": "tmp/RunningTimes_result.csv",
+					"mode": "Overwrite"
+				}
+			}
+		},
+		"tofile1": {
+			"component": "com.sap.file.toFile",
+			"metadata": {
+				"label": "To File",
+				"x": 501.99999713897705,
+				"y": 27,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"graphterminator1": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 785.9999961853027,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,43 168.99999952316284,43 168.99999952316284,52 196.99999904632568,52"
+			},
+			"src": {
+				"port": "file",
+				"process": "readfile1"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "fromfile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "255.99999904632568,61 283.9999985694885,61 283.9999985694885,52 311.99999809265137,52"
+			},
+			"src": {
+				"port": "message",
+				"process": "fromfile1"
+			},
+			"tgt": {
+				"port": "input1",
+				"process": "python3operator1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "440.99999809265137,52 468.9999976158142,52 468.9999976158142,61 496.99999713897705,61"
+			},
+			"src": {
+				"port": "output1",
+				"process": "python3operator1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "tofile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "555.999997138977,52 595.999997138977,52"
+			},
+			"src": {
+				"port": "file",
+				"process": "tofile1"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "writefile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "724.999997138977,43 752.9999966621399,43 752.9999966621399,52 780.9999961853027,52"
+			},
+			"src": {
+				"port": "file",
+				"process": "writefile1"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
