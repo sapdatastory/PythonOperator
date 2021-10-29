@@ -42,6 +42,7 @@ Read File --> ToString Coverter --> Python3 --> To File --> Write File --> Graph
 #### 1.3 Structured File Consumer Operator : table - message Type
 ![](/dataconversion/images/0.FilePython.png)<br>
 Structured File Consumer --> Table To Message Converter --> Python3 --> To File --> Write File --> Graph Terminator
+Table To Message Converter에서 string 데이터 타입 변환 중 오류 발생됨
 
         from io import StringIO
         import pandas as pd
@@ -102,6 +103,7 @@ Constant Generator --> HANA Client --> Python3 --> To File --> Write File --> Gr
 ![](/dataconversion/images/5.HanaPython.png)<br>
 ![](/dataconversion/images/5.HanaPython_Error.png)<br>
 Constant Generator --> Run HANA SQL --> ToMessage Converter --> Python3 --> To File --> Write File --> Graph Terminator
+오류 발생됨
 
 from io import StringIO
 import pandas as pd
@@ -124,6 +126,7 @@ import pandas as pd
 #### 2.4 Run HANA SQL Operator : message.table - string Type
 ![](/dataconversion/images/6.HanaPython.png)<br>
 Constant Generator --> Run HANA SQL --> ToString Converter --> Python3 --> To File --> Write File --> Graph Terminator
+오류 발생됨 - 데이터 출력 형식이 
 
         from io import StringIO
         import pandas as pd
