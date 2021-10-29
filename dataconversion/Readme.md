@@ -99,8 +99,25 @@ Constant Generator --> HANA Client --> Python3 --> To File --> Write File --> Gr
 
     api.set_port_callback("input1", on_input)
 
+#### HANA Client Operator : message - blob - string Type
 ![](/dataconversion/images/7.HanaPython.png)<br>
-Constant Generator --> HANA Client --> ToBlob Converter --> Format Converter --> ToString Converter --> Python3
+Constant Generator --> HANA Client --> ToBlob Converter --> Format Converter --> ToString Converter --> Python3 --> To File --> Write File --> Graph Terminator
+
+    from io import StringIO
+    import pandas as pd
+
+    def on_input(msg):
+
+        data = StringIO(msg)
+
+        df = pd.read_csv(data, sep=',')
+        result = df
+        csv = result.to_csv(sep=',', index=False)
+
+        api.send("output1", csv)
+
+    api.set_port_callback("input1", on_input)
+
 
 #### 2.3 Run HANA SQL Operator : message.table - message Type
 ![](/dataconversion/images/5.HanaPython.png)<br>
