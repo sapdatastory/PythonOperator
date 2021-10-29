@@ -62,7 +62,8 @@ Read File -> ToString Coverter -> Python3 -> To File -> Write File -> Graph Term
 
 #### 2.1 Table Consumer Operator : table - message Type
 ![](/dataconversion/images/3.HanaPython.png)<br>
-    
+Table Consumer --> Table To Message Converter --> Python3 --> To File --> Write File --> Graph Terminator
+
     from io import StringIO
     import pandas as pd
 
@@ -80,7 +81,8 @@ Read File -> ToString Coverter -> Python3 -> To File -> Write File -> Graph Term
 
 #### 2.2 HANA Client Operator : message - message Type
 ![](/dataconversion/images/4.HanaPython.png)<br>
-    
+Constant Generator --> HANA Client --> Python3 --> To File --> Write File --> Graph Terminator
+
     from io import StringIO
     import pandas as pd
 
@@ -99,6 +101,7 @@ Read File -> ToString Coverter -> Python3 -> To File -> Write File -> Graph Term
 #### 2.3 Run HANA SQL Operator : message.table - message Type
 ![](/dataconversion/images/5.HanaPython.png)<br>
 ![](/dataconversion/images/5.HanaPython_Error.png)<br>
+Constant Generator --> Run HANA SQL --> ToMessage Converter --> Python3 --> To File --> Write File --> Graph Terminator
 
 from io import StringIO
 import pandas as pd
@@ -120,6 +123,7 @@ import pandas as pd
 
 #### 2.4 Run HANA SQL Operator : message.table - string Type
 ![](/dataconversion/images/6.HanaPython.png)<br>
+Constant Generator --> Run HANA SQL --> ToString Converter --> Python3 --> To File --> Write File --> Graph Terminator
 
         from io import StringIO
         import pandas as pd
