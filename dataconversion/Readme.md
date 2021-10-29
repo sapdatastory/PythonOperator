@@ -3,7 +3,7 @@
 ### 1. File to Python 처리
 #### 1.1 File Consumer Operator : table - message Type
 ![](/dataconversion/images/0.FilePython.png)<br>
-Structured File Consumer <> Table To Message Converter <> Python3 <> To File <> Write File <> Graph Terminator
+Structured File Consumer -> Table To Message Converter -> Python3 -> To File -> Write File -> Graph Terminator
 
         from io import StringIO
         import pandas as pd
@@ -20,8 +20,9 @@ Structured File Consumer <> Table To Message Converter <> Python3 <> To File <> 
 
         api.set_port_callback("input1", on_input)
 
-#### 1.1 Read File Operator : message.file - message Type
+#### 1.2 Read File Operator : message.file - message Type
 ![](/dataconversion/images/1.FilePython.png)<br>
+Read File -> From File -> Python3 -> To File -> Write File -> Graph Terminator
 
     from io import StringIO
     import pandas as pd
@@ -38,8 +39,9 @@ Structured File Consumer <> Table To Message Converter <> Python3 <> To File <> 
 
     api.set_port_callback("input1", on_input)
 
-#### 1.2 Read File Operator : message.file - string Data Type
+#### 1.3 Read File Operator : message.file - string Data Type
 ![](/dataconversion/images/2.FilePython.png)<br>
+Read File -> ToString Coverter -> Python3 -> To File -> Write File -> Graph Terminator
 
     from io import StringIO
     import pandas as pd
