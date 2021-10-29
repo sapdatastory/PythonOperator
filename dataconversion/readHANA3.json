@@ -1,0 +1,264 @@
+{
+	"properties": {},
+	"description": "Copy of Read DB3",
+	"processes": {
+		"runhanasql1": {
+			"component": "com.sap.hana.runSQL",
+			"metadata": {
+				"label": "Run HANA SQL",
+				"x": 186,
+				"y": 72,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"configMode": "Dynamic (from input)",
+					"connection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "H00"
+					}
+				}
+			}
+		},
+		"constantgenerator1": {
+			"component": "com.sap.util.constantGenerator",
+			"metadata": {
+				"label": "Constant Generator",
+				"x": 17,
+				"y": 72,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {
+					"content": "select * from DI_DEMO.PRODUCT"
+				}
+			}
+		},
+		"12multiplexer111": {
+			"component": "com.sap.system.multiplexer.1-2",
+			"metadata": {
+				"label": "1:2 Multiplexer",
+				"x": 454,
+				"y": 72,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {}
+			},
+			"name": "12multiplexer11"
+		},
+		"wiretap111": {
+			"component": "com.sap.util.wiretap",
+			"metadata": {
+				"label": "Wiretap",
+				"x": 638.9999990463257,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"ui": "dynpath",
+				"config": {}
+			},
+			"name": "wiretap11"
+		},
+		"python3operator111": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "Python3 Operator",
+				"x": 638.9999990463257,
+				"y": 132,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {
+					"script": "from io import StringIO\nimport pandas as pd\n\ndef on_input(msg):\n\n    #data = StringIO(msg.body.decode(\"utf-8\"))\n    #data = StringIO(msg)\n\n    #df = pd.read_csv(data, sep=',')\n    #result = df\n\n    data = pd.DataFrame(msg)\n    result = data\n    \n    csv = result.to_csv(sep=',', index=False)\n\n    #api.send(\"output1\", api.Message(attributes=msg.attributes, body=csv))\n    api.send(\"output1\", csv)\n\napi.set_port_callback(\"input1\", on_input)"
+				},
+				"additionalinports": [
+					{
+						"name": "input1",
+						"type": "string"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output1",
+						"type": "message"
+					}
+				]
+			},
+			"name": "python3operator11"
+		},
+		"tofile111": {
+			"component": "com.sap.file.toFile",
+			"metadata": {
+				"label": "To File",
+				"x": 823.9999980926514,
+				"y": 87,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			},
+			"name": "tofile11"
+		},
+		"writefile111": {
+			"component": "com.sap.file.write",
+			"metadata": {
+				"label": "Write File",
+				"x": 922.9999980926514,
+				"y": 72,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"connection": {
+						"configurationType": "System Management Files (\"/files/\")",
+						"vrepRoot": "/files/"
+					},
+					"pathMode": "Static (from configuration)",
+					"path": "tmp/PRODUCT_2.csv",
+					"mode": "Overwrite"
+				}
+			},
+			"name": "writefile11"
+		},
+		"graphterminator111": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 1107.999997138977,
+				"y": 72,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			},
+			"name": "graphterminator11"
+		},
+		"tostringconverter1": {
+			"component": "com.sap.util.toStringConverter",
+			"metadata": {
+				"label": "ToString Converter",
+				"x": 355,
+				"y": 87,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,112 181,112"
+			},
+			"src": {
+				"port": "out",
+				"process": "constantgenerator1"
+			},
+			"tgt": {
+				"port": "input",
+				"process": "runhanasql1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "578,103 605.9999995231628,103 605.9999995231628,52 633.9999990463257,52"
+			},
+			"src": {
+				"port": "out1",
+				"process": "12multiplexer111"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "wiretap111"
+			}
+		},
+		{
+			"metadata": {
+				"points": "762.9999990463257,172 790.9999985694885,172 790.9999985694885,121 818.9999980926514,121"
+			},
+			"src": {
+				"port": "output1",
+				"process": "python3operator111"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "tofile111"
+			}
+		},
+		{
+			"metadata": {
+				"points": "877.9999980926514,112 917.9999980926514,112"
+			},
+			"src": {
+				"port": "file",
+				"process": "tofile111"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "writefile111"
+			}
+		},
+		{
+			"metadata": {
+				"points": "1046.9999980926514,103 1074.9999976158142,103 1074.9999976158142,112 1102.999997138977,112"
+			},
+			"src": {
+				"port": "file",
+				"process": "writefile111"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator111"
+			}
+		},
+		{
+			"metadata": {
+				"points": "310,103 350,103"
+			},
+			"src": {
+				"port": "success",
+				"process": "runhanasql1"
+			},
+			"tgt": {
+				"port": "ininterface",
+				"process": "tostringconverter1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "409,112 449,112"
+			},
+			"src": {
+				"port": "outstring",
+				"process": "tostringconverter1"
+			},
+			"tgt": {
+				"port": "in1",
+				"process": "12multiplexer111"
+			}
+		},
+		{
+			"metadata": {
+				"points": "578,121 605.9999995231628,121 605.9999995231628,172 633.9999990463257,172"
+			},
+			"src": {
+				"port": "out2",
+				"process": "12multiplexer111"
+			},
+			"tgt": {
+				"port": "input1",
+				"process": "python3operator111"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
