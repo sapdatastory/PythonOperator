@@ -99,6 +99,9 @@ Constant Generator --> HANA Client --> Python3 --> To File --> Write File --> Gr
 
     api.set_port_callback("input1", on_input)
 
+![](/dataconversion/images/7.HanaPython.png)<br>
+Constant Generator --> HANA Client --> ToBlob Converter --> Format Converter --> ToString Converter --> Python3
+
 #### 2.3 Run HANA SQL Operator : message.table - message Type
 ![](/dataconversion/images/5.HanaPython.png)<br>
 ![](/dataconversion/images/5.HanaPython_Error.png)<br>
