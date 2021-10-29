@@ -165,7 +165,7 @@ Read File --> From File --> Python3 --> HANA Client --> Graph Terminator
 
 #### 3.2 Write HANA SQL Operator : message - message.table Type
 ![](/dataconversion/images/2.PythonHANA.png)<br>
-Read File --> From File --> Python3 --> Write HANA Table --> Graph Terminator
+Read File --> From File --> Python3 --> Write HANA Table --> Graph Terminator<br>
 오류 발생됨
 
     from io import StringIO
