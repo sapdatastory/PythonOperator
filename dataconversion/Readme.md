@@ -181,4 +181,3 @@ Read File --> From File --> Python3 --> Write HANA Table --> Graph Terminator
         api.send("output1", api.Message(attributes=msg.attributes, body=csv))
 
     api.set_port_callback("input1", on_input)
-
