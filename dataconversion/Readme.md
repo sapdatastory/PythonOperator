@@ -3,6 +3,7 @@
 ### 1. File to Python 처리
 #### 1.1 File Consumer Operator : table - message Type
 ![](/dataconversion/images/0.FilePython.png)<br>
+Structured File Consumer <> Table To Message Converter <> Python3 <> To File <> Write File <> Graph Terminator
 
         from io import StringIO
         import pandas as pd
