@@ -1,0 +1,223 @@
+{
+	"properties": {},
+	"description": "Read DB",
+	"processes": {
+		"tableconsumer1": {
+			"component": "com.sap.database.table.consumer.v2",
+			"metadata": {
+				"label": "Table Consumer",
+				"x": 17,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 1,
+				"config": {
+					"service": "HANA_DB",
+					"partitionType": "None",
+					"serviceConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "SHC_DI_AM"
+					},
+					"source": {
+						"remoteObjectReference": {
+							"connection": {
+								"id": "SHC_DI_AM",
+								"type": "HANA_DB"
+							},
+							"name": "PRODUCT",
+							"remoteObjectType": "TABLE",
+							"qualifiedName": "/DI_DEMO/PRODUCT",
+							"nativeQualifiedName": "\"DI_DEMO\".\"PRODUCT\"",
+							"owner": "DI_DEMO"
+						},
+						"schema": {
+							"genericType": "TABLE",
+							"tableBasedRepresentation": {
+								"attributes": []
+							}
+						},
+						"capabilityProperties": [
+							{
+								"name": "isProfileable",
+								"value": "true"
+							}
+						],
+						"filter": {
+							"selectOptions": []
+						}
+					}
+				},
+				"outports": [
+					{
+						"name": "outTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.tableconsumer1_outTable"
+					}
+				]
+			}
+		},
+		"tabletomessageconverter1": {
+			"component": "com.sap.util.tableToMessageConverter",
+			"metadata": {
+				"label": "Table To Message Converter",
+				"x": 186,
+				"y": 27,
+				"height": 50,
+				"width": 50,
+				"extensible": false,
+				"generation": 1,
+				"config": {},
+				"inports": [
+					{
+						"name": "inTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.tableconsumer1_outTable"
+					}
+				]
+			}
+		},
+		"python3operator1": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "Python3 Operator",
+				"x": 285,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {
+					"script": "from io import StringIO\nimport pandas as pd\n\ndef on_input(msg):\n\n    #data = StringIO(msg.body.decode(\"utf-8\"))\n    data = StringIO(msg.body)\n\n    df = pd.read_csv(data, sep=',')\n    result = df\n    csv = result.to_csv(sep=',', index=False)\n\n    api.send(\"output1\", api.Message(attributes=msg.attributes, body=csv))\n    #api.send(\"output1\", csv)\n\napi.set_port_callback(\"input1\", on_input)\n"
+				},
+				"additionalinports": [
+					{
+						"name": "input1",
+						"type": "message"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output1",
+						"type": "message"
+					}
+				]
+			}
+		},
+		"writefile1": {
+			"component": "com.sap.file.write",
+			"metadata": {
+				"label": "Write File",
+				"x": 568.9999990463257,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"connection": {
+						"configurationType": "System Management Files (\"/files/\")",
+						"vrepRoot": "/files/"
+					},
+					"pathMode": "Static (from configuration)",
+					"path": "tmp/PRODUCT.csv",
+					"mode": "Overwrite"
+				}
+			}
+		},
+		"graphterminator1": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 753.9999980926514,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"tofile1": {
+			"component": "com.sap.file.toFile",
+			"metadata": {
+				"label": "To File",
+				"x": 469.9999990463257,
+				"y": 27,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,52 181,52"
+			},
+			"src": {
+				"port": "outTable",
+				"process": "tableconsumer1"
+			},
+			"tgt": {
+				"port": "inTable",
+				"process": "tabletomessageconverter1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "692.9999990463257,43 720.9999985694885,43 720.9999985694885,52 748.9999980926514,52"
+			},
+			"src": {
+				"port": "file",
+				"process": "writefile1"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "409,52 436.99999952316284,52 436.99999952316284,61 464.9999990463257,61"
+			},
+			"src": {
+				"port": "output1",
+				"process": "python3operator1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "tofile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "523.9999990463257,52 563.9999990463257,52"
+			},
+			"src": {
+				"port": "file",
+				"process": "tofile1"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "writefile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "240,52 280,52"
+			},
+			"src": {
+				"port": "outMessage",
+				"process": "tabletomessageconverter1"
+			},
+			"tgt": {
+				"port": "input1",
+				"process": "python3operator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
