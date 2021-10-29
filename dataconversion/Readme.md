@@ -164,7 +164,7 @@ Read File --> From File --> Python3 --> HANA Client --> Graph Terminator
     api.set_port_callback("input1", on_input)
 
 #### 3.2 Write HANA SQL Operator : message - message.table Type
-![](/dataconversion/images/1.PythonHANA.png)<br>
+![](/dataconversion/images/2.PythonHANA.png)<br>
 Read File --> From File --> Python3 --> Write HANA Table --> Graph Terminator
 
     from io import StringIO
