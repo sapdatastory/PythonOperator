@@ -1,0 +1,184 @@
+{
+	"properties": {},
+	"description": "Read DB2",
+	"processes": {
+		"saphanaclient1": {
+			"component": "com.sap.hana.client2",
+			"metadata": {
+				"label": "SAP HANA Client",
+				"x": 201.99999904632568,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"connection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "H00"
+					}
+				}
+			}
+		},
+		"constantgenerator1": {
+			"component": "com.sap.util.constantGenerator",
+			"metadata": {
+				"label": "Constant Generator",
+				"x": 17,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {
+					"content": "select * from DI_DEMO.PRODUCT"
+				}
+			}
+		},
+		"python3operator11": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "Python3 Operator",
+				"x": 370.9999990463257,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {
+					"script": "from io import StringIO\nimport pandas as pd\n\ndef on_input(msg):\n\n    #data = StringIO(msg.body.decode(\"utf-8\"))\n    #data = StringIO(msg.body)\n    data = pd.DataFrame(msg.body)\n\n    #df = pd.read_csv(data, sep=',')\n    result = data\n    csv = result.to_csv(sep=',', index=False)\n\n    api.send(\"output1\", api.Message(attributes=msg.attributes, body=csv))\n    #api.send(\"output1\", csv)\n\napi.set_port_callback(\"input1\", on_input)\n"
+				},
+				"additionalinports": [
+					{
+						"name": "input1",
+						"type": "message"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output1",
+						"type": "message"
+					}
+				]
+			},
+			"name": "python3operator1"
+		},
+		"tofile11": {
+			"component": "com.sap.file.toFile",
+			"metadata": {
+				"label": "To File",
+				"x": 555.9999980926514,
+				"y": 27,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			},
+			"name": "tofile1"
+		},
+		"writefile11": {
+			"component": "com.sap.file.write",
+			"metadata": {
+				"label": "Write File",
+				"x": 654.9999980926514,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"connection": {
+						"configurationType": "System Management Files (\"/files/\")",
+						"vrepRoot": "/files/"
+					},
+					"pathMode": "Static (from configuration)",
+					"path": "tmp/PRODUCT_1.csv",
+					"mode": "Overwrite"
+				}
+			},
+			"name": "writefile1"
+		},
+		"graphterminator11": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 839.999997138977,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			},
+			"name": "graphterminator1"
+		}
+	},
+	"groups": [],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,52 168.99999952316284,52 168.99999952316284,43 196.99999904632568,43"
+			},
+			"src": {
+				"port": "out",
+				"process": "constantgenerator1"
+			},
+			"tgt": {
+				"port": "sql",
+				"process": "saphanaclient1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "609.9999980926514,52 649.9999980926514,52"
+			},
+			"src": {
+				"port": "file",
+				"process": "tofile11"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "writefile11"
+			}
+		},
+		{
+			"metadata": {
+				"points": "778.9999980926514,43 806.9999976158142,43 806.9999976158142,52 834.999997138977,52"
+			},
+			"src": {
+				"port": "file",
+				"process": "writefile11"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator11"
+			}
+		},
+		{
+			"metadata": {
+				"points": "325.9999990463257,52 365.9999990463257,52"
+			},
+			"src": {
+				"port": "result",
+				"process": "saphanaclient1"
+			},
+			"tgt": {
+				"port": "input1",
+				"process": "python3operator11"
+			}
+		},
+		{
+			"metadata": {
+				"points": "494.9999990463257,52 522.9999985694885,52 522.9999985694885,61 550.9999980926514,61"
+			},
+			"src": {
+				"port": "output1",
+				"process": "python3operator11"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "tofile11"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
