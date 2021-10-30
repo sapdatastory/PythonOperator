@@ -1,2 +1,2 @@
-# Oracle Custom Operator
+# Oracle Custom Operator 만들기
 
