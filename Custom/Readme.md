@@ -1,2 +1,2 @@
-# Custom Operator 예제
+# Custom Operator Example
 
