@@ -1,10 +1,10 @@
 # IQ(HANA Data Lake) Custom Operator Example
 
-## 1. Build dockerfile
+## 1. How to create dockerfile
     
-    Create Dockerfile : proj.sapiq
+    Input dockerfile path : proj.sapiq
     
-    ### how to create dockerfile
+    ### Dockerfile
     FROM opensuse/leap:15.1
     ARG GOPATH=/gopath
     ARG GOROOT=/goroot
@@ -47,6 +47,14 @@
     USER 1972:1972
     WORKDIR /home/vflow
     ENV HOME=/home/vflow
-
+    
+    ### Tags.json
+    {
+        "opensuse": "",
+        "python36": "",
+        "tornado": "5.0.2",
+        "sapiq": "16.1"
+    }
 
 ## 2. IQ Pipeline
+
