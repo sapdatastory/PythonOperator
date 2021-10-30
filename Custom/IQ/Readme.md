@@ -61,3 +61,31 @@
 
 ## 2. IQ Pipeline
 
+    def on_input(data):
+        import sqlanydb
+        from pandas import DataFrame
+
+        conn = sqlanydb.connect(uid='user', pwd='password', eng='host_iqdemo', dbn='iqdemo', host='xxx.xxx.xxx.xxx:2638' )
+        cursor = conn.cursor()
+
+        sql = "SELECT * FROM Employees"
+        cursor.execute(sql)
+
+        desc = cursor.description
+        print(len(desc))
+
+        rowset = cursor.fetchall()
+
+        df = DataFrame(rowset)
+        df.columns = desc
+        print(df)
+
+        cursor.close()
+        conn.close()
+
+        api.send("output", str(df))
+
+    api.set_port_callback("input", on_input)
+
+![](Images/iq_pipeline.png)<br>
+![](Images/result.png)<br>
