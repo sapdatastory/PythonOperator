@@ -1,6 +1,6 @@
 # IQ(HANA Data Lake) Custom Operator Example
 
-## 1. How to create dockerfile
+## 1. Docker Image
     
     1. Input dockerfile path : proj.sapiq
     
