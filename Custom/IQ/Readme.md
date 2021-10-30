@@ -2,9 +2,11 @@
 
 ## 1. How to create dockerfile
     
-    Input dockerfile path : proj.sapiq
+    1. Input dockerfile path : proj.sapiq
     
-    ### Dockerfile
+    2. Load file iq161.TGZ into Repository
+    
+    3. Write Dockerfile
     FROM opensuse/leap:15.1
     ARG GOPATH=/gopath
     ARG GOROOT=/goroot
@@ -48,7 +50,7 @@
     WORKDIR /home/vflow
     ENV HOME=/home/vflow
     
-    ### Tags.json
+    4. Write Tags.json
     {
         "opensuse": "",
         "python36": "",
