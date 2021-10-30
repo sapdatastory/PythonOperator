@@ -1,1 +1,1 @@
-# ABAP Custom Operator 예제
+# ABAP Custom Operator Example
