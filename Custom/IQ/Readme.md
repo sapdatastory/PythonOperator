@@ -57,6 +57,7 @@
         "tornado": "5.0.2",
         "sapiq": "16.1"
     }
+![](/IQ/images/dockerfile.png)<br>
 
 ## 2. IQ Pipeline
 
