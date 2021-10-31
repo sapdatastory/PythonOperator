@@ -1,0 +1,101 @@
+{
+	"properties": {},
+	"description": "ABAP TEST01",
+	"processes": {
+		"python3operator1": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "SAP NW RFC",
+				"x": 221.99999904632568,
+				"y": 40,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"config": {
+					"script": "\ndef on_input(data):\n    from pyrfc import Connection, ABAPApplicationError, ABAPRuntimeError, LogonError, CommunicationError\n    from configparser import ConfigParser\n    from pprint import PrettyPrinter\n    \n    ASHOST='saphana1.demo21.co.kr'\n    CLIENT='100'\n    SYSNR='40'\n    USER='bpinst'\n    PASSWD='Welcome1'\n    conn = Connection(ashost=ASHOST, sysnr=SYSNR, client=CLIENT, user=USER, passwd=PASSWD)\n    \n    try:\n    \n        options = [{ 'TEXT': \"FCURR = 'USD'\"}]\n        pp = PrettyPrinter(indent=4)\n        ROWS_AT_A_TIME = 10\n        rowskips = 0\n        while True:\n            print(\"----Begin of Batch---\")\n            result = conn.call('RFC_READ_TABLE', \\\n            QUERY_TABLE = 'TCURR', \\\n            OPTIONS = options, \\\n            ROWSKIPS = rowskips, ROWCOUNT = ROWS_AT_A_TIME)\n            pp.pprint(result['DATA'])\n    \n            rowskips += ROWS_AT_A_TIME\n            if len(result['DATA']) < ROWS_AT_A_TIME:\n                break\n    except CommunicationError:\n        print(\"Could not connect to server.\")\n        raise\n    except LogonError:\n        print(\"Could not log in. Wrong credentials?\")\n        raise\n    except (ABAPApplicationError, ABAPRuntimeError):\n        print(\"An error occurred.\")\n        raise\n    \n    conn.close()\n    api.send(\"output\", \"Success\")\n\napi.set_port_callback(\"input\", on_input)\n"
+				},
+				"additionalinports": [
+					{
+						"name": "input",
+						"type": "string"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output",
+						"type": "string"
+					}
+				]
+			}
+		},
+		"constantgenerator1": {
+			"component": "com.sap.util.constantGenerator",
+			"metadata": {
+				"label": "Constant Generator",
+				"x": 17,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"config": {}
+			}
+		},
+		"wiretap1": {
+			"component": "com.sap.util.wiretap",
+			"metadata": {
+				"label": "Wiretap",
+				"x": 426.99999809265137,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"ui": "dynpath",
+				"config": {}
+			}
+		}
+	},
+	"groups": [
+		{
+			"name": "group1",
+			"nodes": [
+				"python3operator1"
+			],
+			"metadata": {
+				"description": "Group"
+			},
+			"tags": {
+				"c_abap": "1.0"
+			}
+		}
+	],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,72 168.99999952316284,72 168.99999952316284,80 216.99999904632568,80"
+			},
+			"src": {
+				"port": "out",
+				"process": "constantgenerator1"
+			},
+			"tgt": {
+				"port": "input",
+				"process": "python3operator1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "345.9999990463257,80 393.9999985694885,80 393.9999985694885,72 421.99999809265137,72"
+			},
+			"src": {
+				"port": "output",
+				"process": "python3operator1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "wiretap1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
