@@ -61,40 +61,42 @@
     }
 
 ## 2. IQ Pipeline
-
-![](Images/iq_pipeline.png)<br>
-Constant Generator --> Python3(IQ) --> Wiretap<br><br>
-![](Images/result.png)<br>
+### 2-1. Read IQ and Write File
+![](Images/readiq.png)<br>
+Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
         import sqlanydb
         from pandas import DataFrame
 
-        conn = sqlanydb.connect(uid='user', pwd='password', eng='host_iqdemo', dbn='iqdemo', host='xxx.xxx.xxx.xxx:2638' )
+        conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')
         cursor = conn.cursor()
 
-        sql = "SELECT * FROM Employees"
+        sql = "SELECT * FROM runningtimes"
         cursor.execute(sql)
-
-        #desc = cursor.description
-        #print(len(desc))
 
         rowset = cursor.fetchall()
 
         df = DataFrame(rowset)
-        df.columns = desc
-        print(df)
+        df.columns = ['ID','HALF','FULL']
+        #print(df)
+        result = df
 
         cursor.close()
+        #conn.commit()
         conn.close()
 
-        api.send("output", str(df))
+        csv = result.to_csv(sep=',', index=False)
+
+        api.send("output", csv)
 
     api.set_port_callback("input", on_input)
 
+### 2-2. Read File and Write IQ
 ![](Images/writeiq2.png)<br>
 Structured File Consumer --> Table Producer --> Graph Terminator
 
+### 2-3. Read File and Write IQ
 ![](Images/writeiq.png)<br>
 Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
 
