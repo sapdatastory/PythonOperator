@@ -61,6 +61,9 @@
 
 ## 2. IQ Pipeline
 
+![](Images/iq_pipeline.png)<br>
+![](Images/result.png)<br>
+
     def on_input(data):
         import sqlanydb
         from pandas import DataFrame
@@ -87,5 +90,36 @@
 
     api.set_port_callback("input", on_input)
 
-![](Images/iq_pipeline.png)<br>
-![](Images/result.png)<br>
+![](Images/writeiq.png)<br>
+
+from io import StringIO
+import pandas as pd
+import sqlanydb
+
+    def on_input(msg):
+
+        data = StringIO(msg.body.decode("utf-8"))
+
+        df = pd.read_csv(data, sep=';')
+        rows = df.values.tolist()
+        #print(rows)
+
+        # IQ
+        parms = ("?," * len(rows[0]))[:-1]
+        sql = "INSERT INTO runningtimes VALUES (%s)" % (parms)
+        #print(sql)
+
+        conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')
+        cursor = conn.cursor()
+
+        cursor.executemany(sql, rows)
+
+        cursor.close()
+        conn.commit()
+        conn.close()
+
+        result = {"Number of Rows": str(len(rows))}
+        api.send("output1", api.Message(result))
+
+    api.set_port_callback("input1", on_input)
+
