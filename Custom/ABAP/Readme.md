@@ -106,6 +106,36 @@ Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminat
 
     api.set_port_callback("input", on_input)
 
+<br>
+
+    def on_input(data):
+        from pyrfc import Connection, ABAPApplicationError, ABAPRuntimeError, LogonError, CommunicationError
+        from configparser import ConfigParser
+        from pprint import PrettyPrinter
+
+        ASHOST='saphana1.demo21.co.kr'
+        CLIENT='100'
+        SYSNR='40'
+        USER='bpinst'
+        PASSWD='Welcome1'
+        conn = Connection(ashost=ASHOST, sysnr=SYSNR, client=CLIENT, user=USER, passwd=PASSWD)
+
+        options = [{ 'TEXT': "FCURR = 'USD'"}]
+        result = conn.call('RFC_READ_TABLE', \
+                            QUERY_TABLE = 'TCURR', \
+                            OPTIONS = options)
+        # result : Dictionary Data Type
+
+        out = str(result['DATA']) # List to String
+
+        #import pandas as pd
+        #df = pd.DataFrame(result['DATA']) # List to DataFrmae
+
+        conn.close()
+        api.send("output", out)
+
+    api.set_port_callback("input", on_input)
+
 ### 2-2. Read File and Write Oracle
 ![](Images/abapwrite.png)<br>
 Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
