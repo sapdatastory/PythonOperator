@@ -59,38 +59,55 @@
 
 ## 2. ABAP Pipeline
 ### 2-1. Read ABAP and Write File
-![](Images/readiq.png)<br>
+![](Images/abapread.png)<br>
 Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
-        import sqlanydb
-        from pandas import DataFrame
+        from pyrfc import Connection, ABAPApplicationError, ABAPRuntimeError, LogonError, CommunicationError
+        from configparser import ConfigParser
+        from pprint import PrettyPrinter
 
-        conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')
-        cursor = conn.cursor()
+        ASHOST='saphana1.demo21.co.kr'
+        CLIENT='100'
+        SYSNR='40'
+        USER='bpinst'
+        PASSWD='Welcome1'
+        conn = Connection(ashost=ASHOST, sysnr=SYSNR, client=CLIENT, user=USER, passwd=PASSWD)
 
-        sql = "SELECT * FROM runningtimes"
-        cursor.execute(sql)
+        try:
 
-        rowset = cursor.fetchall()
+            options = [{ 'TEXT': "FCURR = 'USD'"}]
+            pp = PrettyPrinter(indent=4)
+            ROWS_AT_A_TIME = 10
+            rowskips = 0
+            while True:
+                print("----Begin of Batch---")
+                result = conn.call('RFC_READ_TABLE', \
+                QUERY_TABLE = 'TCURR', \
+                OPTIONS = options, \
+                ROWSKIPS = rowskips, ROWCOUNT = ROWS_AT_A_TIME)
+                pp.pprint(result['DATA'])
 
-        df = DataFrame(rowset)
-        df.columns = ['ID','HALF','FULL']
-        #print(df)
-        result = df
+                rowskips += ROWS_AT_A_TIME
+                if len(result['DATA']) < ROWS_AT_A_TIME:
+                    break
+        except CommunicationError:
+            print("Could not connect to server.")
+            raise
+        except LogonError:
+            print("Could not log in. Wrong credentials?")
+            raise
+        except (ABAPApplicationError, ABAPRuntimeError):
+            print("An error occurred.")
+            raise
 
-        cursor.close()
-        #conn.commit()
         conn.close()
-
-        csv = result.to_csv(sep=',', index=False)
-
-        api.send("output", csv)
+        api.send("output", "Success")
 
     api.set_port_callback("input", on_input)
 
 ### 2-2. Read File and Write Oracle
-![](Images/writeiq.png)<br>
+![](Images/abapwrite.png)<br>
 Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
 
     from io import StringIO
