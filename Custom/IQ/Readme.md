@@ -71,8 +71,8 @@
         sql = "SELECT * FROM Employees"
         cursor.execute(sql)
 
-        desc = cursor.description
-        print(len(desc))
+        #desc = cursor.description
+        #print(len(desc))
 
         rowset = cursor.fetchall()
 
