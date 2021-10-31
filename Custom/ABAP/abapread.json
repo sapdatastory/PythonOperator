@@ -1,6 +1,6 @@
 {
 	"properties": {},
-	"description": "ABAP TEST01",
+	"description": "Read ABAP 1",
 	"processes": {
 		"python3operator1": {
 			"component": "com.sap.system.python3Operator",
