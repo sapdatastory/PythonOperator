@@ -2,11 +2,11 @@
 
 ## 1. Docker Image
 
-![](Images/dockerfile.png)<br>
+![](Images/abapdockerfile.png)<br>
 
-    1. Input dockerfile path : proj.sapiq
+    1. Input dockerfile path : proj.abap
     
-    2. Load file iq161.TGZ into Repository
+    2. Load file nwrfcsdk.gz into Repository
     
     3. Write Dockerfile
     FROM opensuse/leap:15.1
@@ -23,29 +23,26 @@
          gzip \
          python3 \
          python3-pip \
+         # fatal error: Python.h: No such file or directory
          python3-devel \
+         #
          gcc=7 \
          gcc-c++=7 \
          libgthread-2_0-0=2.54.3
 
-    COPY iq161.TGZ /tmp/iq161.TGZ
+    COPY nwrfcsdk.gz /tmp/nwrfcsdk.gz
     RUN mkdir -p ${GOROOT} && \
-         tar -xvzf /tmp/iq161.TGZ -C ${GOROOT}
+         tar -xvzf /tmp/nwrfcsdk.gz -C ${GOROOT}
 
-    ENV IQDIR16=/goroot/iq161
-    ENV LD_LIBRARY_PATH=${IQDIR16}/lib64:${LD_LIBRARY_PATH}
+    ENV SAPNWRFC_HOME=/goroot/nwrfcsdk
+    ENV LD_LIBRARY_PATH=${SAPNWRFC_HOME}/lib:${LD_LIBRARY_PATH}
+    ENV PATH=${SAPNWRFC_HOME}/bin:${PATH}
 
     RUN python3 -m pip --no-cache install tornado==5.0.2 && \
          python3 -m pip --no-cache install pandas && \
-         python3 -m pip --no-cache install numpy && \
-         python3 -m pip --no-cache install scikit-learn
+         python3 -m pip --no-cache install cython
 
-    # SAP IQ
-    RUN python3 -m pip --no-cache install sqlanydb
-
-    # SAP NW RFC
-    #RUN python3 -m pip --no-cache install cython && \
-    #     python3 -m pip --no-cache install pyrfc
+    RUN python3 -m pip --no-cache install pyrfc
 
     RUN groupadd -g 1972 vflow && useradd -g 1972 -u 1972 -m vflow
     USER 1972:1972
@@ -57,7 +54,7 @@
         "opensuse": "",
         "python36": "",
         "tornado": "5.0.2",
-        "sapiq": "16.1"
+        "abap": "1.0"
     }
 
 ## 2. ABAP Pipeline
