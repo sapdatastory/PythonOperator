@@ -54,7 +54,7 @@
         "opensuse": "",
         "python36": "",
         "tornado": "5.0.2",
-        "abap": "1.0"
+        "c_abap": "1.0"
     }
 
 ## 2. ABAP Pipeline
