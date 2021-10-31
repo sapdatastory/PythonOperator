@@ -1,0 +1,162 @@
+{
+	"properties": {},
+	"description": "Read IQ 1",
+	"processes": {
+		"python3operator1": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "SAP IQ Client",
+				"x": 221.99999904632568,
+				"y": 40,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"config": {
+					"script": "\ndef on_input(data):\n    import sqlanydb\n    from pandas import DataFrame\n    \n    conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')\n    cursor = conn.cursor()\n    \n    sql = \"SELECT * FROM runningtimes\"\n    cursor.execute(sql)\n    \n    rowset = cursor.fetchall()\n    \n    df = DataFrame(rowset)\n    df.columns = ['ID','HALF','FULL']\n    #print(df)\n    result =df\n    \n    cursor.close()\n    #conn.commit()\n    conn.close()\n\n    csv = result.to_csv(sep=',', index=False)\n\n    api.send(\"output\", csv)\n\napi.set_port_callback(\"input\", on_input)\n"
+				},
+				"additionalinports": [
+					{
+						"name": "input",
+						"type": "string"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output",
+						"type": "string"
+					}
+				]
+			}
+		},
+		"constantgenerator1": {
+			"component": "com.sap.util.constantGenerator",
+			"metadata": {
+				"label": "Constant Generator",
+				"x": 17,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"config": {}
+			}
+		},
+		"tofile11": {
+			"component": "com.sap.file.toFile",
+			"metadata": {
+				"label": "To File",
+				"x": 426.99999809265137,
+				"y": 47,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			},
+			"name": "tofile1"
+		},
+		"writefile11": {
+			"component": "com.sap.file.write",
+			"metadata": {
+				"label": "Write File",
+				"x": 525.9999980926514,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"connection": {
+						"configurationType": "System Management Files (\"/files/\")",
+						"vrepRoot": "/files/"
+					},
+					"pathMode": "Static (from configuration)",
+					"path": "tmp/RunningTimes_result.csv",
+					"mode": "Overwrite"
+				}
+			},
+			"name": "writefile1"
+		},
+		"graphterminator11": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 710.999997138977,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			},
+			"name": "graphterminator1"
+		}
+	},
+	"groups": [
+		{
+			"name": "group1",
+			"nodes": [
+				"python3operator1"
+			],
+			"metadata": {
+				"description": "Group"
+			},
+			"tags": {
+				"sapiq": "16.1"
+			}
+		}
+	],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,72 168.99999952316284,72 168.99999952316284,80 216.99999904632568,80"
+			},
+			"src": {
+				"port": "out",
+				"process": "constantgenerator1"
+			},
+			"tgt": {
+				"port": "input",
+				"process": "python3operator1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "480.99999809265137,72 520.9999980926514,72"
+			},
+			"src": {
+				"port": "file",
+				"process": "tofile11"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "writefile11"
+			}
+		},
+		{
+			"metadata": {
+				"points": "649.9999980926514,63 677.9999976158142,63 677.9999976158142,72 705.999997138977,72"
+			},
+			"src": {
+				"port": "file",
+				"process": "writefile11"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator11"
+			}
+		},
+		{
+			"metadata": {
+				"points": "345.9999990463257,80 393.9999985694885,80 393.9999985694885,81 421.99999809265137,81"
+			},
+			"src": {
+				"port": "output",
+				"process": "python3operator1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "tofile11"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
