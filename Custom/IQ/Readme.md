@@ -1,7 +1,9 @@
 # IQ(HANA Data Lake) Custom Operator Example
 
 ## 1. Docker Image
-    
+
+![](Images/dockerfile.png)<br>
+
     1. Input dockerfile path : proj.sapiq
     
     2. Load file iq161.TGZ into Repository
@@ -57,11 +59,11 @@
         "tornado": "5.0.2",
         "sapiq": "16.1"
     }
-![](Images/dockerfile.png)<br>
 
 ## 2. IQ Pipeline
 
 ![](Images/iq_pipeline.png)<br>
+Read File --> From File --> Python3(IQ) --> Wiretap
 ![](Images/result.png)<br>
 
     def on_input(data):
@@ -91,10 +93,11 @@
     api.set_port_callback("input", on_input)
 
 ![](Images/writeiq.png)<br>
+Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
 
-from io import StringIO
-import pandas as pd
-import sqlanydb
+    from io import StringIO
+    import pandas as pd
+    import sqlanydb
 
     def on_input(msg):
 
