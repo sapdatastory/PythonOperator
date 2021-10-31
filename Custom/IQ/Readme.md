@@ -63,7 +63,7 @@
 ## 2. IQ Pipeline
 
 ![](Images/iq_pipeline.png)<br>
-Read File --> From File --> Python3(IQ) --> Wiretap<br><br>
+Constant Generator --> Python3(IQ) --> Wiretap<br><br>
 ![](Images/result.png)<br>
 
     def on_input(data):
