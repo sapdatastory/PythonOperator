@@ -63,7 +63,7 @@
 ## 2. IQ Pipeline
 
 ![](Images/iq_pipeline.png)<br>
-Read File --> From File --> Python3(IQ) --> Wiretap
+Read File --> From File --> Python3(IQ) --> Wiretap<br>
 ![](Images/result.png)<br>
 
     def on_input(data):
