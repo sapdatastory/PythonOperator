@@ -1,0 +1,159 @@
+{
+	"properties": {},
+	"description": "Write IQ 2",
+	"processes": {
+		"python3operator1": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "Write IQ",
+				"x": 336.99999809265137,
+				"y": 40,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"config": {
+					"script": "from io import StringIO\nimport pandas as pd\nimport sqlanydb\n\ndef on_input(msg):\n\n    data = StringIO(msg.body.decode(\"utf-8\"))\n\n    df = pd.read_csv(data, sep=';')\n    rows = df.values.tolist()\n    #print(rows)\n\n    # IQ\n    parms = (\"?,\" * len(rows[0]))[:-1]\n    sql = \"INSERT INTO runningtimes VALUES (%s)\" % (parms)\n    #print(sql)\n    \n    conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')\n    cursor = conn.cursor()\n    \n    cursor.executemany(sql, rows)\n    \n    cursor.close()\n    conn.commit()\n    conn.close()\n\n    result = {\"Number of Rows\": str(len(rows))}\n    api.send(\"output1\", api.Message(result))\n\napi.set_port_callback(\"input1\", on_input)\n"
+				},
+				"additionalinports": [
+					{
+						"name": "input1",
+						"type": "message"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output1",
+						"type": "message"
+					}
+				]
+			}
+		},
+		"readfile1": {
+			"component": "com.sap.file.read",
+			"metadata": {
+				"label": "Read File",
+				"x": 17,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"mode": "Once",
+					"connection": {
+						"configurationType": "Connection Management",
+						"connectionID": "DI_DATA_LAKE"
+					},
+					"path": "/shared/Demo/RunningTimes.csv"
+				}
+			}
+		},
+		"wiretap1": {
+			"component": "com.sap.util.wiretap",
+			"metadata": {
+				"label": "Wiretap",
+				"x": 541.999997138977,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"ui": "dynpath",
+				"config": {}
+			}
+		},
+		"fromfile1": {
+			"component": "com.sap.file.fromFile",
+			"metadata": {
+				"label": "From File",
+				"x": 201.99999904632568,
+				"y": 47,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"graphterminator1": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 710.999997138977,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [
+		{
+			"name": "group1",
+			"nodes": [
+				"python3operator1"
+			],
+			"metadata": {
+				"description": "Group"
+			},
+			"tags": {
+				"sapiq": "16.1"
+			}
+		}
+	],
+	"connections": [
+		{
+			"metadata": {
+				"points": "460.99999809265137,80 508.9999976158142,80 508.9999976158142,72 536.999997138977,72"
+			},
+			"src": {
+				"port": "output1",
+				"process": "python3operator1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "wiretap1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "141,63 168.99999952316284,63 168.99999952316284,72 196.99999904632568,72"
+			},
+			"src": {
+				"port": "file",
+				"process": "readfile1"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "fromfile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "255.99999904632568,81 283.9999985694885,81 283.9999985694885,80 331.99999809265137,80"
+			},
+			"src": {
+				"port": "message",
+				"process": "fromfile1"
+			},
+			"tgt": {
+				"port": "input1",
+				"process": "python3operator1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "665.999997138977,72 705.999997138977,72"
+			},
+			"src": {
+				"port": "out",
+				"process": "wiretap1"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
