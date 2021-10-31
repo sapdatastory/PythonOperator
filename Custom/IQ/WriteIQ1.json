@@ -1,0 +1,210 @@
+{
+	"properties": {},
+	"description": "Write IQ 1",
+	"processes": {
+		"structuredfileconsumer1": {
+			"component": "com.sap.storage.consumer.v2",
+			"metadata": {
+				"label": "Structured File Consumer",
+				"x": 17,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 1,
+				"config": {
+					"service": "SDL",
+					"serviceConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "DI_DATA_LAKE"
+					},
+					"source": {
+						"remoteObjectReference": {
+							"connection": {
+								"id": "DI_DATA_LAKE",
+								"type": "SDL"
+							},
+							"name": "RunningTimes.csv",
+							"remoteObjectType": "FILE.CSV",
+							"qualifiedName": "/shared/Demo/RunningTimes.csv",
+							"nativeQualifiedName": "/shared/Demo/RunningTimes.csv",
+							"owner": "ac3897u19",
+							"size": 1395,
+							"version": {
+								"dataLastModified": 1635465409000,
+								"metadataLastModified": 1635465409000,
+								"metadataVersionNumber": 1635465409000
+							}
+						},
+						"dataAccessConfiguration": {
+							"rowDelimiter": "\r\n",
+							"charset": "ISO-8859-1",
+							"textDelimiter": "\"",
+							"header": true,
+							"escapeCharacter": "\"",
+							"colDelimiter": ";"
+						},
+						"schema": {
+							"genericType": "TABLE",
+							"tableBasedRepresentation": {
+								"attributes": []
+							}
+						},
+						"capabilityProperties": [
+							{
+								"name": "isProfileable",
+								"value": "true"
+							}
+						]
+					},
+					"failOnStringTruncation": true
+				},
+				"outports": [
+					{
+						"name": "outTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.structuredfileconsumer1_outTable"
+					}
+				]
+			}
+		},
+		"tableproducer1": {
+			"component": "com.sap.database.table.producer.v2",
+			"metadata": {
+				"label": "Table Producer",
+				"x": 186,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 1,
+				"config": {
+					"service": "SAP_IQ",
+					"serviceConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "HDLIQ"
+					},
+					"source": {
+						"remoteObjectReference": {
+							"connection": {
+								"id": "HDLIQ",
+								"type": "SAP_IQ"
+							},
+							"name": "RUNNINGTIMES",
+							"remoteObjectType": "TABLE",
+							"qualifiedName": "/DBA/RUNNINGTIMES",
+							"nativeQualifiedName": "DBA.RUNNINGTIMES",
+							"owner": "DBA"
+						},
+						"dataAccessConfiguration": {
+							"Row Count": "0",
+							"TableType": "TABLE",
+							"Table_Subtype": "TABLE",
+							"MetadataResponseXML": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<MetadataReply xmlns=\"http://www.sap.com/DataServices/DataServicesXSD\">\n<MetadataObjects><Table Name=\"RUNNINGTIMES\"  Owner=\"DBA\" ><Attributes><Attribute Name=\"Table_Subtype\"  Value=\"TABLE\" /></Attributes><Column Name=\"ID\"  Nullable=\"true\" DataType=\"int\" NativeType=\"integer\" ActaEnum=\"ACTA_INTEGER\" ></Column><Column Name=\"HALFTIME\"  Nullable=\"true\" DataType=\"int\" NativeType=\"integer\" ActaEnum=\"ACTA_INTEGER\" ></Column><Column Name=\"FULLTIME\"  Nullable=\"true\" DataType=\"int\" NativeType=\"integer\" ActaEnum=\"ACTA_INTEGER\" ></Column></Table></MetadataObjects><Status><StatusCode>SUCCESS</StatusCode></Status></MetadataReply>"
+						},
+						"schema": {
+							"genericType": "TABLE",
+							"tableBasedRepresentation": {
+								"attributes": [
+									{
+										"name": "ID",
+										"templateType": "int32",
+										"datatype": "INTEGER",
+										"length": 4,
+										"nativeDatatype": "integer"
+									},
+									{
+										"name": "HALFTIME",
+										"templateType": "int32",
+										"datatype": "INTEGER",
+										"length": 4,
+										"nativeDatatype": "integer"
+									},
+									{
+										"name": "FULLTIME",
+										"templateType": "int32",
+										"datatype": "INTEGER",
+										"length": 4,
+										"nativeDatatype": "integer"
+									}
+								]
+							}
+						},
+						"capabilityProperties": [
+							{
+								"name": "isProfileable",
+								"value": "true"
+							}
+						]
+					},
+					"mode": "append",
+					"attributeMappings": [
+						{
+							"expression": "\"ID\"",
+							"target": "ID"
+						},
+						{
+							"expression": "\"HALFMARATHON_MINUTES\"",
+							"target": "HALFTIME"
+						},
+						{
+							"expression": "\"MARATHON_MINUTES\"",
+							"target": "FULLTIME"
+						}
+					]
+				},
+				"inports": [
+					{
+						"name": "inTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.structuredfileconsumer1_outTable"
+					}
+				]
+			}
+		},
+		"graphterminator1": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 355,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,52 181,52"
+			},
+			"src": {
+				"port": "outTable",
+				"process": "structuredfileconsumer1"
+			},
+			"tgt": {
+				"port": "inTable",
+				"process": "tableproducer1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "310,52 350,52"
+			},
+			"src": {
+				"port": "outMessage",
+				"process": "tableproducer1"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
