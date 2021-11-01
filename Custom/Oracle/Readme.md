@@ -69,7 +69,7 @@ Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminat
         import sqlanydb
         from pandas import DataFrame
 
-        conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')
+        conn = sqlanydb.connect(uid='User', pwd='Password', eng='EngineName', dbn='DBName', host='xxx.xxx.xxx.xxx:2638')
         cursor = conn.cursor()
 
         sql = "SELECT * FROM runningtimes"
@@ -113,7 +113,7 @@ Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
         sql = "INSERT INTO runningtimes VALUES (%s)" % (parms)
         #print(sql)
 
-        conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')
+        conn = sqlanydb.connect(uid='User', pwd='Password', eng='EngineName', dbn='DBName', host='xxx.xxx.xxx.xxx:2638')
         cursor = conn.cursor()
 
         cursor.executemany(sql, rows)
