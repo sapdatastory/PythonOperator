@@ -12,7 +12,7 @@
 				"width": 120,
 				"extensible": true,
 				"config": {
-					"script": "from io import StringIO\nimport pandas as pd\nimport sqlanydb\n\ndef on_input(msg):\n\n    data = StringIO(msg.body.decode(\"utf-8\"))\n\n    df = pd.read_csv(data, sep=';')\n    rows = df.values.tolist()\n    #print(rows)\n\n    # IQ\n    parms = (\"?,\" * len(rows[0]))[:-1]\n    sql = \"INSERT INTO runningtimes VALUES (%s)\" % (parms)\n    #print(sql)\n    \n    conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')\n    cursor = conn.cursor()\n    \n    cursor.executemany(sql, rows)\n    \n    cursor.close()\n    conn.commit()\n    conn.close()\n\n    result = {\"Number of Rows\": str(len(rows))}\n    api.send(\"output1\", api.Message(result))\n\napi.set_port_callback(\"input1\", on_input)\n"
+					"script": "from io import StringIO\nimport pandas as pd\nimport sqlanydb\n\ndef on_input(msg):\n\n    data = StringIO(msg.body.decode(\"utf-8\"))\n\n    df = pd.read_csv(data, sep=';')\n    rows = df.values.tolist()\n    #print(rows)\n\n    # IQ\n    parms = (\"?,\" * len(rows[0]))[:-1]\n    sql = \"INSERT INTO runningtimes VALUES (%s)\" % (parms)\n    #print(sql)\n    \n    conn = sqlanydb.connect(uid='UserID', pwd='Password', eng='EngineName', dbn='DBName', host='xxx.xxx.xxx.xxx:2638')\n    cursor = conn.cursor()\n    \n    cursor.executemany(sql, rows)\n    \n    cursor.close()\n    conn.commit()\n    conn.close()\n\n    result = {\"Number of Rows\": str(len(rows))}\n    api.send(\"output1\", api.Message(result))\n\napi.set_port_callback(\"input1\", on_input)\n"
 				},
 				"additionalinports": [
 					{
