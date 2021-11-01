@@ -12,7 +12,7 @@
 				"width": 120,
 				"extensible": true,
 				"config": {
-					"script": "\ndef on_input(data):\n    import sqlanydb\n    from pandas import DataFrame\n    \n    conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')\n    cursor = conn.cursor()\n    \n    sql = \"SELECT * FROM runningtimes\"\n    cursor.execute(sql)\n    \n    rowset = cursor.fetchall()\n    \n    df = DataFrame(rowset)\n    df.columns = ['ID','HALF','FULL']\n    #print(df)\n    result =df\n    \n    cursor.close()\n    #conn.commit()\n    conn.close()\n\n    csv = result.to_csv(sep=',', index=False)\n\n    api.send(\"output\", csv)\n\napi.set_port_callback(\"input\", on_input)\n"
+					"script": "\ndef on_input(data):\n    import sqlanydb\n    from pandas import DataFrame\n    \n    conn = sqlanydb.connect(uid='UserID', pwd='Password', eng='EngineName', dbn='DBName', host='xxx.xxx.xxx.xxx:2638')\n    cursor = conn.cursor()\n    \n    sql = \"SELECT * FROM runningtimes\"\n    cursor.execute(sql)\n    \n    rowset = cursor.fetchall()\n    \n    df = DataFrame(rowset)\n    df.columns = ['ID','HALF','FULL']\n    #print(df)\n    result =df\n    \n    cursor.close()\n    #conn.commit()\n    conn.close()\n\n    csv = result.to_csv(sep=',', index=False)\n\n    api.send(\"output\", csv)\n\napi.set_port_callback(\"input\", on_input)\n"
 				},
 				"additionalinports": [
 					{
