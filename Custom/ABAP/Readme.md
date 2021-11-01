@@ -67,11 +67,11 @@ Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminat
         from configparser import ConfigParser
         from pprint import PrettyPrinter
 
-        ASHOST='saphana1.demo21.co.kr'
+        ASHOST='xxx.xxx.xxx.xxx'
         CLIENT='100'
         SYSNR='40'
-        USER='bpinst'
-        PASSWD='Welcome1'
+        USER='UserID'
+        PASSWD='Password'
         conn = Connection(ashost=ASHOST, sysnr=SYSNR, client=CLIENT, user=USER, passwd=PASSWD)
 
         try:
@@ -157,7 +157,7 @@ Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
         sql = "INSERT INTO runningtimes VALUES (%s)" % (parms)
         #print(sql)
 
-        conn = sqlanydb.connect(uid='DBA', pwd='sqlsql', eng='hana1_iqdemo', dbn='iqdemo', host='hana1.pntdemo.kr:26381')
+        conn = sqlanydb.connect(uid='UserID', pwd='Password', eng='EngineName', dbn='DBName', host='xxx.xxx.xxx.xxx:2638')
         cursor = conn.cursor()
 
         cursor.executemany(sql, rows)
