@@ -113,11 +113,11 @@ Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminat
         from configparser import ConfigParser
         from pprint import PrettyPrinter
 
-        ASHOST='saphana1.demo21.co.kr'
+        ASHOST='xxx.xxx.xxx.xxx'
         CLIENT='100'
         SYSNR='40'
-        USER='bpinst'
-        PASSWD='Welcome1'
+        USER='UserID'
+        PASSWD='Password'
         conn = Connection(ashost=ASHOST, sysnr=SYSNR, client=CLIENT, user=USER, passwd=PASSWD)
 
         options = [{ 'TEXT': "FCURR = 'USD'"}]
