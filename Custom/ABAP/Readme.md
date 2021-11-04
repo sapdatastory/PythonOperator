@@ -1,6 +1,6 @@
 # ABAP Custom Operator Example
 
-## 1. Docker Image
+## 1. Build ABAP_RFC Docker(Container) Image
 
 ![](Images/abapdockerfile.png)<br>
 
@@ -58,9 +58,9 @@
     }
 
 ## 2. ABAP Pipeline
-### 2-1. Read ABAP and Write File
+### 2-1. Ingest ABAP_RFC into Files
 ![](Images/abapread.png)<br>
-Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminator<br>
+Constant Generator --> Python3(Read ABAP_RFC) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
         from pyrfc import Connection, ABAPApplicationError, ABAPRuntimeError, LogonError, CommunicationError
@@ -136,9 +136,9 @@ Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminat
 
     api.set_port_callback("input", on_input)
 
-### 2-2. Read File and Write IQ
+### 2-2. Ingest Files into IQ
 ![](Images/abapwrite.png)<br>
-Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
+Read File --> From File --> Python3(Write IQ) --> Wiretap --> Graph Terminator
 
     from io import StringIO
     import pandas as pd
