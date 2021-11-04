@@ -4,9 +4,9 @@
 
 ![](Images/dockerfile.png)<br>
 
-    1. Input dockerfile path : proj.sapiq
+    1. Input dockerfile path : proj.ora122010
     
-    2. Load file iq161.TGZ into Repository
+    2. Load file ora122010.zip into Repository
     
     3. Write Dockerfile
     FROM opensuse/leap:15.1
@@ -21,31 +21,27 @@
           zypper --non-interactive install --no-recommends --force-resolution \
          tar \
          gzip \
+         unzip \
          python3 \
          python3-pip \
          python3-devel \
          gcc=7 \
          gcc-c++=7 \
-         libgthread-2_0-0=2.54.3
+         libgthread-2_0-0=2.54.3 \
+         libaio
 
-    COPY iq161.TGZ /tmp/iq161.TGZ
+    COPY ora122010.zip /tmp/ora122010.zip
     RUN mkdir -p ${GOROOT} && \
-         tar -xvzf /tmp/iq161.TGZ -C ${GOROOT}
+         unzip /tmp/ora122010.zip -d ${GOROOT}
 
-    ENV IQDIR16=/goroot/iq161
-    ENV LD_LIBRARY_PATH=${IQDIR16}/lib64:${LD_LIBRARY_PATH}
+    ARG ORACLIENT=/goroot/instantclient_12_2
+    ENV LD_LIBRARY_PATH=${ORACLIENT}/lib:${LD_LIBRARY_PATH}
 
     RUN python3 -m pip --no-cache install tornado==5.0.2 && \
          python3 -m pip --no-cache install pandas && \
-         python3 -m pip --no-cache install numpy && \
-         python3 -m pip --no-cache install scikit-learn
+         python3 -m pip --no-cache install cython
 
-    # SAP IQ
-    RUN python3 -m pip --no-cache install sqlanydb
-
-    # SAP NW RFC
-    #RUN python3 -m pip --no-cache install cython && \
-    #     python3 -m pip --no-cache install pyrfc
+    RUN python3 -m pip --no-cache install cx_Oracle
 
     RUN groupadd -g 1972 vflow && useradd -g 1972 -u 1972 -m vflow
     USER 1972:1972
@@ -57,7 +53,7 @@
         "opensuse": "",
         "python36": "",
         "tornado": "5.0.2",
-        "sapiq": "16.1"
+        "oracle": "12.2.0.1.0"
     }
 
 ## 2. Oracle Pipeline
