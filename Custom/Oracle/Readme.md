@@ -58,35 +58,27 @@
 
 ## 2. Oracle Pipeline
 ### 2-1. Read Oracle and Write File
-![](Images/readiq.png)<br>
-Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminator<br>
+![](Images/pipeline_readOracle.png)<br>
+Constant Generator --> Python3(Read Oracle) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
-        import sqlanydb
-        from pandas import DataFrame
+        import cx_Oracle
+        import pandas as pd
 
-        conn = sqlanydb.connect(uid='User', pwd='Password', eng='EngineName', dbn='DBName', host='xxx.xxx.xxx.xxx:2638')
-        cursor = conn.cursor()
+        connection = cx_Oracle.connect(user="userid", password="userpw",
+                                       dsn="xxx.xxx.xxx.xxx:1234/servicename")
 
-        sql = "SELECT * FROM runningtimes"
-        cursor.execute(sql)
+        sql = """SELECT *
+                 FROM customers"""
+        result = pd.read_sql(sql, connection)
 
-        rowset = cursor.fetchall()
-
-        df = DataFrame(rowset)
-        df.columns = ['ID','HALF','FULL']
-        #print(df)
-        result = df
-
-        cursor.close()
-        #conn.commit()
-        conn.close()
+        connection.close()
 
         csv = result.to_csv(sep=',', index=False)
-
         api.send("output", csv)
 
     api.set_port_callback("input", on_input)
+
 
 ### 2-2. Read File and Write Oracle
 ![](Images/writeiq.png)<br>
