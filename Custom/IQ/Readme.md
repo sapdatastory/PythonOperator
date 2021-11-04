@@ -1,6 +1,6 @@
 # IQ(HANA Data Lake) Custom Operator Example
 
-## 1. Docker Image
+## 1. Build IQ Docker(Container) Image
 
 ![](Images/dockerfile.png)<br>
 
