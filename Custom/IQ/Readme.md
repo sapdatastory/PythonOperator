@@ -92,7 +92,7 @@ Constant Generator --> Python3(Read IQ) --> To File --> Write File --> Graph Ter
 
     api.set_port_callback("input", on_input)
 
-### 2-2. Ingest Files into IQ (표준 Operator)
+### 2-2. Ingest Files into IQ (Standard Operator)
 ![](Images/writeiq2.png)<br>
 Structured File Consumer --> Table Producer --> Graph Terminator
 <br><br><br>
