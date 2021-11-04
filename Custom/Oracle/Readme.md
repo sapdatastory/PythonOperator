@@ -57,7 +57,7 @@
     }
 
 ## 2. Oracle Pipeline
-### 2-1. Read Oracle and Write File
+### 2-1. Ingest Oracle into Files
 ![](Images/pipeline_readOracle.png)<br>
 Constant Generator --> Python3(Read Oracle) --> To File --> Write File --> Graph Terminator<br>
 
@@ -80,9 +80,9 @@ Constant Generator --> Python3(Read Oracle) --> To File --> Write File --> Graph
     api.set_port_callback("input", on_input)
 
 
-### 2-2. Read File and Write Oracle
-![](Images/writeiq.png)<br>
-Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
+### 2-2. Ingest Files into Oracle
+![](Images/pipeline_writeOracle.png)<br>
+Read File --> From File --> Python3(Write Oracle) --> Wiretap --> Graph Terminator
 
     from io import StringIO
     import pandas as pd
