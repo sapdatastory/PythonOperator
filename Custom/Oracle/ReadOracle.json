@@ -12,7 +12,7 @@
 				"width": 120,
 				"extensible": true,
 				"config": {
-					"script": "\ndef on_input(data):\n    import cx_Oracle\n    import pandas as pd\n\n    connection = cx_Oracle.connect(user=\"BDHE2ETESTS\", password=\"Sapvora123\",\n                                   dsn=\"im-ds-k8s-gcp.datahub.sapcloud.io:32598/orapdb1\")\n\n    sql = \"\"\"SELECT *\n             FROM customers\"\"\"\n    result = pd.read_sql(sql, connection)\n\n    connection.close()\n\n    csv = result.to_csv(sep=',', index=False)\n    api.send(\"output\", csv)\n\napi.set_port_callback(\"input\", on_input)\n"
+					"script": "\ndef on_input(data):\n    import cx_Oracle\n    import pandas as pd\n\n    connection = cx_Oracle.connect(user=\"userid\", password=\"userpw\",\n                                   dsn=\"xxx.xxx.xxx.xxx:1234/servicename\")\n\n    sql = \"\"\"SELECT *\n             FROM customers\"\"\"\n    result = pd.read_sql(sql, connection)\n\n    connection.close()\n\n    csv = result.to_csv(sep=',', index=False)\n    api.send(\"output\", csv)\n\napi.set_port_callback(\"input\", on_input)\n"
 				},
 				"additionalinports": [
 					{
