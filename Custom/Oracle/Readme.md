@@ -1,6 +1,6 @@
 # Oracle Custom Operator Example
 
-## 1. Docker Image
+## 1. Build Oracle Docker(Container) Image
 
 ![](Images/dockerfile_oracle.png)<br>
 
