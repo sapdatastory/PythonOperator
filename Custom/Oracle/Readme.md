@@ -2,7 +2,7 @@
 
 ## 1. Docker Image
 
-![](Images/dockerfile.png)<br>
+![](Images/dockerfile_oracle.png)<br>
 
     1. Input dockerfile path : proj.ora122010
     
