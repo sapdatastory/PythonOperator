@@ -137,7 +137,7 @@ Constant Generator --> Python3(Read ABAP_RFC) --> To File --> Write File --> Gra
     api.set_port_callback("input", on_input)
 
 ### 2-2. Ingest Files into IQ
-![](Images/abapwrite.png)<br>
+![](Images/pipeline_writeIQ.png)<br>
 Read File --> From File --> Python3(Write IQ) --> Wiretap --> Graph Terminator
 
     from io import StringIO
