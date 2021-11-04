@@ -61,9 +61,9 @@
     }
 
 ## 2. IQ Pipeline
-### 2-1. Read IQ and Write File
+### 2-1. Ingest IQ to Files
 ![](Images/readiq.png)<br>
-Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminator<br>
+Constant Generator --> Python3(Read IQ) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
         import sqlanydb
@@ -92,13 +92,14 @@ Constant Generator --> Python3(IQ) --> To File --> Write File --> Graph Terminat
 
     api.set_port_callback("input", on_input)
 
-### 2-2. Read File and Write IQ
+### 2-2. Ingest Files into IQ (표준 Operator)
 ![](Images/writeiq2.png)<br>
 Structured File Consumer --> Table Producer --> Graph Terminator
+<br><br><br>
 
-### 2-3. Read File and Write IQ
+### 2-3. Ingest Files into IQ
 ![](Images/writeiq.png)<br>
-Read File --> From File --> Python3(IQ) --> Wiretap --> Graph Terminator
+Read File --> From File --> Python3(Write IQ) --> Wiretap --> Graph Terminator
 
     from io import StringIO
     import pandas as pd
