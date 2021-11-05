@@ -1,0 +1,159 @@
+{
+	"properties": {},
+	"description": "Ingest DB2 into File",
+	"processes": {
+		"python3operator1": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "Read DB2",
+				"x": 221.99999904632568,
+				"y": 40,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"config": {
+					"script": "\ndef on_input(data):\n    import ibm_db\n    import pandas as pd\n\n    conn_str='database=dbname;hostname=xxx.xxx.xxx.xxx;port=12345;protocol=tcpip;uid=userid;pwd=userpw'\n    ibm_db_conn = ibm_db.connect(conn_str,'','')\n    \n    import ibm_db_dbi\n    conn = ibm_db_dbi.Connection(ibm_db_conn)\n    \n    select = \"SELECT * FROM EMP\"\n    cur = conn.cursor()\n    cur.execute(select)\n    row=cur.fetchall()\n\n    df = pd.DataFrame(row)\n    #df.columns = ['ID','HALF','FULL']\n    #print(df)\n    result = df\n    \n    cur.close()\n    ibm_db.close(ibm_db_conn)\n    \n    csv = result.to_csv(sep=',', index=False)\n    api.send(\"output\", csv)\n\napi.set_port_callback(\"input\", on_input)\n"
+				},
+				"additionalinports": [
+					{
+						"name": "input",
+						"type": "string"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output",
+						"type": "string"
+					}
+				]
+			}
+		},
+		"constantgenerator1": {
+			"component": "com.sap.util.constantGenerator",
+			"metadata": {
+				"label": "Constant Generator",
+				"x": 17,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"config": {}
+			}
+		},
+		"tofile1": {
+			"component": "com.sap.file.toFile",
+			"metadata": {
+				"label": "To File",
+				"x": 426.99999809265137,
+				"y": 47,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"writefile1": {
+			"component": "com.sap.file.write",
+			"metadata": {
+				"label": "Write File",
+				"x": 525.9999980926514,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {
+					"connection": {
+						"configurationType": "System Management Files (\"/files/\")",
+						"vrepRoot": "/files/"
+					},
+					"mode": "Overwrite",
+					"pathMode": "Static (from configuration)",
+					"path": "tmp/DB2_QA_EMP.csv"
+				}
+			}
+		},
+		"graphterminator1": {
+			"component": "com.sap.util.graphTerminator",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 710.999997138977,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [
+		{
+			"name": "group1",
+			"nodes": [
+				"python3operator1"
+			],
+			"metadata": {
+				"description": "Group"
+			},
+			"tags": {
+				"z_db2": "10.1"
+			}
+		}
+	],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,72 168.99999952316284,72 168.99999952316284,80 216.99999904632568,80"
+			},
+			"src": {
+				"port": "out",
+				"process": "constantgenerator1"
+			},
+			"tgt": {
+				"port": "input",
+				"process": "python3operator1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "345.9999990463257,80 393.9999985694885,80 393.9999985694885,81 421.99999809265137,81"
+			},
+			"src": {
+				"port": "output",
+				"process": "python3operator1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "tofile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "480.99999809265137,72 520.9999980926514,72"
+			},
+			"src": {
+				"port": "file",
+				"process": "tofile1"
+			},
+			"tgt": {
+				"port": "file",
+				"process": "writefile1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "649.9999980926514,63 677.9999976158142,63 677.9999976158142,72 705.999997138977,72"
+			},
+			"src": {
+				"port": "file",
+				"process": "writefile1"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "graphterminator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
