@@ -65,13 +65,13 @@ Constant Generator --> Python3(Read DB2) --> To File --> Write File --> Graph Te
         import ibm_db
         import pandas as pd
 
-        conn_str='database=db2pdb;hostname=im-ds-k8s-gcp.datahub.sapcloud.io;port=32593;protocol=tcpip;uid=bdhe2etests;pwd=Sapvora123'
+        conn_str='database=dbname;hostname=xxx.xxx.xxx.xxx;port=12345;protocol=tcpip;uid=userid;pwd=userpw'
         ibm_db_conn = ibm_db.connect(conn_str,'','')
 
         import ibm_db_dbi
         conn = ibm_db_dbi.Connection(ibm_db_conn)
 
-        select = "SELECT * FROM BDHE2ETESTS.QA_EMP"
+        select = "SELECT * FROM EMP"
         cur = conn.cursor()
         cur.execute(select)
         row=cur.fetchall()
