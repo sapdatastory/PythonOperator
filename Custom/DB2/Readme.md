@@ -90,7 +90,7 @@ Constant Generator --> Python3(Read DB2) --> To File --> Write File --> Graph Te
     api.set_port_callback("input", on_input)
 
 
-### 2-2. Ingest Files into DB2
+### 2-2. Ingest Files into DB2 - 
 ![](Images/pipeline_writeDB2.png)<br>
 Read File --> From File --> Python3(Write DB2) --> Wiretap --> Graph Terminator
 
