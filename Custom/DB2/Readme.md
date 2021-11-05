@@ -4,11 +4,9 @@
 
 ![](Images/dockerfile_db2.png)<br>
 
-    1. Input dockerfile path : proj.ora122010
+    1. Input dockerfile path : proj.db2_101
     
-    2. Load file ora122010.zip into Repository
-    
-    3. Write Dockerfile
+    2. Write Dockerfile
     FROM opensuse/leap:15.1
     ARG GOPATH=/gopath
     ARG GOROOT=/goroot
@@ -30,30 +28,32 @@
          libgthread-2_0-0=2.54.3 \
          libaio
 
-    COPY ora122010.zip /tmp/ora122010.zip
-    RUN mkdir -p ${GOROOT} && \
-         unzip /tmp/ora122010.zip -d ${GOROOT}
+    #COPY instantclient-basiclite-linux.x64-12.2.0.1.0.zip /tmp/instantclient-basiclite-linux.x64-12.2.0.1.0.zip
+    #RUN mkdir -p ${GOROOT} && \
+    #     unzip /tmp/instantclient-basiclite-linux.x64-12.2.0.1.0.zip -d ${GOROOT}
 
-    ARG ORACLIENT=/goroot/instantclient_12_2
-    ENV LD_LIBRARY_PATH=${ORACLIENT}/lib:${LD_LIBRARY_PATH}
+    #ARG ORACLIENT=/goroot/instantclient_12_2
+    #ENV LD_LIBRARY_PATH=${ORACLIENT}:${LD_LIBRARY_PATH}
 
     RUN python3 -m pip --no-cache install tornado==5.0.2 && \
          python3 -m pip --no-cache install pandas && \
-         python3 -m pip --no-cache install cython
+         python3 -m pip --no-cache install numpy && \
+         python3 -m pip --no-cache install scikit-learn
 
-    RUN python3 -m pip --no-cache install cx_Oracle
+    # DB2
+    RUN python3 -m pip --no-cache install ibm_db
 
     RUN groupadd -g 1972 vflow && useradd -g 1972 -u 1972 -m vflow
     USER 1972:1972
     WORKDIR /home/vflow
     ENV HOME=/home/vflow
     
-    4. Write Tags.json
+    3. Write Tags.json
     {
         "opensuse": "",
         "python36": "",
         "tornado": "5.0.2",
-        "oracle": "12.2.0.1.0"
+        "z_db2": "10.1"
     }
 
 ## 2. DB2 Pipeline
@@ -62,17 +62,27 @@
 Constant Generator --> Python3(Read DB2) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
-        import cx_Oracle
+        import ibm_db
         import pandas as pd
 
-        connection = cx_Oracle.connect(user="userid", password="userpw",
-                                       dsn="xxx.xxx.xxx.xxx:1234/servicename")
+        conn_str='database=db2pdb;hostname=im-ds-k8s-gcp.datahub.sapcloud.io;port=32593;protocol=tcpip;uid=bdhe2etests;pwd=Sapvora123'
+        ibm_db_conn = ibm_db.connect(conn_str,'','')
 
-        sql = """SELECT *
-                 FROM customers"""
-        result = pd.read_sql(sql, connection)
+        import ibm_db_dbi
+        conn = ibm_db_dbi.Connection(ibm_db_conn)
 
-        connection.close()
+        select = "SELECT * FROM BDHE2ETESTS.QA_EMP"
+        cur = conn.cursor()
+        cur.execute(select)
+        row=cur.fetchall()
+
+        df = pd.DataFrame(row)
+        #df.columns = ['ID','HALF','FULL']
+        #print(df)
+        result = df
+
+        cur.close()
+        ibm_db.close(ibm_db_conn)
 
         csv = result.to_csv(sep=',', index=False)
         api.send("output", csv)
