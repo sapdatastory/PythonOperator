@@ -63,17 +63,24 @@
 Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
-        import cx_Oracle
+        import pymssql
         import pandas as pd
 
-        connection = cx_Oracle.connect(user="userid", password="userpw",
-                                       dsn="xxx.xxx.xxx.xxx:1234/servicename")
+        conn = pymssql.connect(server='52.29.170.204', user='sa', password='PTAcademy!', database='TA')
 
-        sql = """SELECT *
-                 FROM customers"""
-        result = pd.read_sql(sql, connection)
+        select = 'SELECT * FROM Products;'
+        cursor = conn.cursor()
+        cursor.execute(select)
+        row = cursor.fetchall()
+        #print(row)
 
-        connection.close()
+        df = pd.DataFrame(row)
+        #df.columns = ['ID','HALF','FULL']
+        #print(df)
+        result = df
+
+        cursor.close()
+        conn.close()
 
         csv = result.to_csv(sep=',', index=False)
         api.send("output", csv)
