@@ -30,30 +30,31 @@
          libgthread-2_0-0=2.54.3 \
          libaio
 
-    COPY ora122010.zip /tmp/ora122010.zip
-    RUN mkdir -p ${GOROOT} && \
-         unzip /tmp/ora122010.zip -d ${GOROOT}
+    #COPY ora122010.zip /tmp/ora122010.zip
+    #RUN mkdir -p ${GOROOT} && \
+    #     unzip /tmp/ora122010.zip -d ${GOROOT}
 
-    ARG ORACLIENT=/goroot/instantclient_12_2
-    ENV LD_LIBRARY_PATH=${ORACLIENT}/lib:${LD_LIBRARY_PATH}
+    #ARG ORACLIENT=/goroot/instantclient_12_2
+    #ENV LD_LIBRARY_PATH=${ORACLIENT}/lib:${LD_LIBRARY_PATH}
 
     RUN python3 -m pip --no-cache install tornado==5.0.2 && \
          python3 -m pip --no-cache install pandas && \
          python3 -m pip --no-cache install cython
 
-    RUN python3 -m pip --no-cache install cx_Oracle
+    # MSSQL
+    RUN python3 -m pip --no-cache install pymssql
 
     RUN groupadd -g 1972 vflow && useradd -g 1972 -u 1972 -m vflow
     USER 1972:1972
     WORKDIR /home/vflow
     ENV HOME=/home/vflow
-    
+
     4. Write Tags.json
     {
         "opensuse": "",
         "python36": "",
         "tornado": "5.0.2",
-        "oracle": "12.2.0.1.0"
+        "z_mssql": ""
     }
 
 ## 2. MSSQL Pipeline
