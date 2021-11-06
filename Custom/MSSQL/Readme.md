@@ -16,33 +16,37 @@
     ENV GOPATH=${GOPATH}
     ENV PATH=${GOROOT}/bin:${GOPATH}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-    RUN zypper --non-interactive update && \
-         # Install tar, gzip, python3, pip3, gcc and libgthread
-          zypper --non-interactive install --no-recommends --force-resolution \
-         tar \
-         gzip \
-         unzip \
-         python3 \
-         python3-pip \
-         python3-devel \
-         gcc=7 \
-         gcc-c++=7 \
-         libgthread-2_0-0=2.54.3 \
-         libaio
+    RUN zypper --non-interactive update
 
-    #COPY ora122010.zip /tmp/ora122010.zip
-    #RUN mkdir -p ${GOROOT} && \
-    #     unzip /tmp/ora122010.zip -d ${GOROOT}
+    # Install python3, pip3, and gcc
+    RUN zypper --non-interactive install --no-recommends --force-resolution \
+        curl \
+        python3 \
+        python3-pip \
+        python3-devel \
+        gcc=7 \
+        gcc-c++=7 \
+        #libgthread-2_0-0=2.54.3 \
+        unixODBC-devel
 
-    #ARG ORACLIENT=/goroot/instantclient_12_2
-    #ENV LD_LIBRARY_PATH=${ORACLIENT}/lib:${LD_LIBRARY_PATH}
+    RUN curl -O https://packages.microsoft.com/keys/microsoft.asc
+    RUN rpm --import microsoft.asc
+    RUN zypper ar https://packages.microsoft.com/config/sles/15/prod.repo
+    RUN ACCEPT_EULA=Y zypper --non-interactive install --no-recommends --force-resolution \
+                      msodbcsql17
 
+    # Configre PATH, LD_LIBRARY_PATH and etc
+    # ENV PATH=
+    # ENV LD_LIBRARY_PATH=${IQDIR16}/lib64:${LD_LIBRARY_PATH}
+
+    # Python package
     RUN python3 -m pip --no-cache install tornado==5.0.2 && \
-         python3 -m pip --no-cache install pandas && \
-         python3 -m pip --no-cache install cython
+        python3 -m pip --no-cache install pandas && \
+        python3 -m pip --no-cache install numpy && \
+        python3 -m pip --no-cache install scikit-learn
 
-    # MSSQL
-    RUN python3 -m pip --no-cache install pymssql
+    # MSSQL package
+    RUN python3 -m pip --no-cache install pyodbc pymssql
 
     RUN groupadd -g 1972 vflow && useradd -g 1972 -u 1972 -m vflow
     USER 1972:1972
@@ -86,6 +90,25 @@ Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph 
         api.send("output", csv)
 
     api.set_port_callback("input", on_input)
+
+import pyodbc
+# Some other example server values are
+# server = 'localhost\sqlexpress' # for a named instance
+# server = 'myserver,port' # to specify an alternate port
+server = 'tcp:52.29.170.204'
+database = 'TA'
+username = 'sa'
+password = 'PTAcademy!'
+cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+cursor = cnxn.cursor()
+
+#cursor.execute("SELECT @@version;") 
+cursor.execute("SELECT * from Products;")
+row = cursor.fetchall()
+print(row)
+
+cursor.close()
+cnxn.close()
 
 
 ### 2-2. Ingest Files into MSSQL
