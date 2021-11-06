@@ -66,7 +66,7 @@ Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph 
         import pymssql
         import pandas as pd
 
-        conn = pymssql.connect(server='52.29.170.204', user='sa', password='PTAcademy!', database='TA')
+        conn = pymssql.connect(server='xxx.xxx.xxx.xxx', user='userid', password='userpw', database='dbname')
 
         select = 'SELECT * FROM Products;'
         cursor = conn.cursor()
