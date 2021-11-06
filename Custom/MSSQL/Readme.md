@@ -91,24 +91,24 @@ Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph 
 
     api.set_port_callback("input", on_input)
 
-import pyodbc
-# Some other example server values are
-# server = 'localhost\sqlexpress' # for a named instance
-# server = 'myserver,port' # to specify an alternate port
-server = 'tcp:52.29.170.204'
-database = 'TA'
-username = 'sa'
-password = 'PTAcademy!'
-cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-cursor = cnxn.cursor()
+    import pyodbc
+    # Some other example server values are
+    # server = 'localhost\sqlexpress' # for a named instance
+    # server = 'myserver,port' # to specify an alternate port
+    server = 'tcp:52.29.170.204'
+    database = 'TA'
+    username = 'sa'
+    password = 'PTAcademy!'
+    cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
+    cursor = cnxn.cursor()
 
-#cursor.execute("SELECT @@version;") 
-cursor.execute("SELECT * from Products;")
-row = cursor.fetchall()
-print(row)
+    #cursor.execute("SELECT @@version;") 
+    cursor.execute("SELECT * from Products;")
+    row = cursor.fetchall()
+    print(row)
 
-cursor.close()
-cnxn.close()
+    cursor.close()
+    cnxn.close()
 
 
 ### 2-2. Ingest Files into MSSQL
