@@ -59,8 +59,8 @@
 ![](Images/pipeline_readMSSQL1.png)<br>
 Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph Terminator<br>
 
-Using pymssql<br>
-    # Using pymssql
+Using pymssql
+
     def on_input(data):
         import pymssql
         import pandas as pd
@@ -86,7 +86,8 @@ Using pymssql<br>
 
     api.set_port_callback("input", on_input)
 <br>
-Using pyodbc<br>
+Using pyodbc
+
     def on_input(data):
         import pyodbc
         import pandas as pd
