@@ -85,7 +85,8 @@ Using pymssql
         api.send("output", csv)
 
     api.set_port_callback("input", on_input)
-<br>
+
+
 Using pyodbc
 
     def on_input(data):
