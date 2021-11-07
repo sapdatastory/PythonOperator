@@ -15,7 +15,7 @@
     RUN python3 -m pip install --user statsmodels
     RUN python3 -m pip install --user pmdarima
     RUN python3 -m pip install --user boto3
-    RUN python3 -m pip install --user PyMySQL
+    RUN python3 -m pip install --user psycopg2
 
     3. Write Tags.json
     {
@@ -28,19 +28,12 @@
 Constant Generator --> Python3(Read PostgreSQL) --> To File --> Write File --> Graph Terminator<br>
 
     def on_input(data):
-        import pymysql
+        import psycopg2
         import pandas as pd
 
-        conn = pymysql.connect(
-                user='userid', 
-                passwd='userpw', 
-                host='xxx.xxx.xxx.xxx', 
-                port=31725, 
-                db='dbname',
-                charset='utf8'
-        )
+        conn = psycopg2.connect(host='localhost',dbname='testdb',user='postgres',password='password',port=5432)
 
-        sql = "select * from QA_EMP"
+        sql = "select * from TEST"
 
         cursor = conn.cursor()
         cursor.execute(sql)
