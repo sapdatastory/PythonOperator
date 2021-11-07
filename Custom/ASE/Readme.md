@@ -1,1 +1,1 @@
-# SAP ASE 예제
+# ASE Custom Operator Example
