@@ -102,20 +102,13 @@ Using pyodbc
         password = 'userpw'
         conn = pyodbc.connect('DRIVER={FreeTDS};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
-        cursor = conn.cursor()
-        <br>
-        #cursor.execute("SELECT @@version;") 
+        #select = "SELECT @@version;" 
         select = 'SELECT * FROM Products;'
-        cursor.execute(select)
-        row = cursor.fetchall()
-        #print(row)
 
-        df = pd.DataFrame(row)
-        #df.columns = ['ID','HALF','FULL']
-        #print(df)
-        result = df
+        # 1. using pandas
+        result = pd.read_sql(select, conn)
+        #print(result)
 
-        cursor.close()
         conn.close()
 
         csv = result.to_csv(sep=',', index=False)
