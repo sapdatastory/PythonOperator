@@ -100,7 +100,7 @@ Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph 
         conn = pyodbc.connect('DRIVER={FreeTDS};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
         cursor = conn.cursor()
-
+        <br>
         #cursor.execute("SELECT @@version;") 
         select = 'SELECT * FROM Products;'
         cursor.execute(select)
