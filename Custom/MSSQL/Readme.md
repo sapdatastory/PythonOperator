@@ -59,6 +59,7 @@
 ![](Images/pipeline_readMSSQL1.png)<br>
 Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph Terminator<br>
 
+    # Using pymssql
     def on_input(data):
         import pymssql
         import pandas as pd
@@ -84,24 +85,40 @@ Constant Generator --> Python3(Read MSSQL) --> To File --> Write File --> Graph 
 
     api.set_port_callback("input", on_input)
 
-    import pyodbc
-    # Some other example server values are
-    # server = 'localhost\sqlexpress' # for a named instance
-    # server = 'myserver,port' # to specify an alternate port
-    server = 'tcp:52.29.170.204'
-    database = 'TA'
-    username = 'sa'
-    password = 'PTAcademy!'
-    cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-    cursor = cnxn.cursor()
+    # Using pyodbc
+    def on_input(data):
+        import pyodbc
+        import pandas as pd
 
-    #cursor.execute("SELECT @@version;") 
-    cursor.execute("SELECT * from Products;")
-    row = cursor.fetchall()
-    print(row)
+        # Some other example server values are
+        # server = 'localhost\sqlexpress' # for a named instance
+        # server = 'myserver,port' # to specify an alternate port
+        server = 'xxx.xxx.xxx.xxx,1433'
+        database = 'dbname'
+        username = 'userid'
+        password = 'userpw'
+        conn = pyodbc.connect('DRIVER={FreeTDS};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
 
-    cursor.close()
-    cnxn.close()
+        cursor = conn.cursor()
+
+        #cursor.execute("SELECT @@version;") 
+        select = 'SELECT * FROM Products;'
+        cursor.execute(select)
+        row = cursor.fetchall()
+        #print(row)
+
+        df = pd.DataFrame(row)
+        #df.columns = ['ID','HALF','FULL']
+        #print(df)
+        result = df
+
+        cursor.close()
+        conn.close()
+
+        csv = result.to_csv(sep=',', index=False)
+        api.send("output", csv)
+
+    api.set_port_callback("input", on_input)
 
 
 ### 2-2. Ingest Files into MSSQL
