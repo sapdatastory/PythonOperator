@@ -2,44 +2,37 @@
 
 ## 1. Build MSSQL Docker(Container) Image
 
-![](Images/dockerfile_mssql1.png)<br>
+![](Images/dockerfile_mssql3.png)<br>
 
-    1. Input dockerfile path : proj.mssql
+    1. Input dockerfile path : proj.z_mssql_py36slim
     
-    2. Load file ora122010.zip into Repository
-    
-    3. Write Dockerfile
-    FROM opensuse/leap:15.1
-    ARG GOPATH=/gopath
-    ARG GOROOT=/goroot
-    ENV GOROOT=${GOROOT}
-    ENV GOPATH=${GOPATH}
-    ENV PATH=${GOROOT}/bin:${GOPATH}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    2. Write Dockerfile
+    # parent image
+    FROM python:3.6-slim
 
-    RUN zypper --non-interactive update
+    # install FreeTDS and dependencies
+    RUN apt-get update \
+     && apt-get install unixodbc -y \
+     && apt-get install unixodbc-dev -y \
+     && apt-get install freetds-dev -y \
+     && apt-get install freetds-bin -y \
+     && apt-get install tdsodbc -y \
+     && apt-get install --reinstall build-essential -y
 
-    # Install python3, pip3, and gcc
-    RUN zypper --non-interactive install --no-recommends --force-resolution \
-        curl \
-        python3 \
-        python3-pip \
-        python3-devel \
-        gcc=7 \
-        gcc-c++=7 \
-        #libgthread-2_0-0=2.54.3 \
-        unixODBC-devel
+    # populate "ocbcinst.ini"
+    RUN echo "[FreeTDS]\n\
+    Description = FreeTDS unixODBC Driver\n\
+    Driver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\n\
+    Setup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so" >> /etc/odbcinst.ini
 
-    RUN curl -O https://packages.microsoft.com/keys/microsoft.asc
-    RUN rpm --import microsoft.asc
-    RUN zypper ar https://packages.microsoft.com/config/sles/15/prod.repo
-    RUN ACCEPT_EULA=Y zypper --non-interactive install --no-recommends --force-resolution \
-                      msodbcsql17
-
-    # Configre PATH, LD_LIBRARY_PATH and etc
-    # ENV PATH=
-    # ENV LD_LIBRARY_PATH=${IQDIR16}/lib64:${LD_LIBRARY_PATH}
+    # install pyodbc (and, optionally, sqlalchemy)
+    #pyodbc==4.0.28 sqlalchemy==1.3.5
+    #RUN pip install --trusted-host pypi.python.org tornado==5.0.2 \ 
+    # && pip install --trusted-host pypi.python.org pandas numpy scikit-learn \
+    # && pip install --trusted-host pypi.python.org pyodbc pymssql sqlalchemy
 
     # Python package
+    RUN python3 -m pip install --upgrade pip
     RUN python3 -m pip --no-cache install tornado==5.0.2 && \
         python3 -m pip --no-cache install pandas && \
         python3 -m pip --no-cache install numpy && \
@@ -53,12 +46,12 @@
     WORKDIR /home/vflow
     ENV HOME=/home/vflow
 
-    4. Write Tags.json
+    3. Write Tags.json
     {
         "opensuse": "",
         "python36": "",
         "tornado": "5.0.2",
-        "z_mssql": ""
+        "z_mssql_py36slim": ""
     }
 
 ## 2. MSSQL Pipeline
