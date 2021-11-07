@@ -4,54 +4,22 @@
 
 ![](Images/dockerfile_mysql.png)<br>
 
-    1. Input dockerfile path : proj.z_mssql_py36slim
+    1. Input dockerfile path : proj.z_mysql_sles
     
     2. Write Dockerfile
-    # parent image
-    FROM python:3.6-slim
-
-    # install FreeTDS and dependencies
-    RUN apt-get update \
-     && apt-get install unixodbc -y \
-     && apt-get install unixodbc-dev -y \
-     && apt-get install freetds-dev -y \
-     && apt-get install freetds-bin -y \
-     && apt-get install tdsodbc -y \
-     && apt-get install --reinstall build-essential -y
-
-    # populate "ocbcinst.ini"
-    RUN echo "[FreeTDS]\n\
-    Description = FreeTDS unixODBC Driver\n\
-    Driver = /usr/lib/x86_64-linux-gnu/odbc/libtdsodbc.so\n\
-    Setup = /usr/lib/x86_64-linux-gnu/odbc/libtdsS.so" >> /etc/odbcinst.ini
-
-    # install pyodbc (and, optionally, sqlalchemy)
-    #pyodbc==4.0.28 sqlalchemy==1.3.5
-    #RUN pip install --trusted-host pypi.python.org tornado==5.0.2 \ 
-    # && pip install --trusted-host pypi.python.org pandas numpy scikit-learn \
-    # && pip install --trusted-host pypi.python.org pyodbc pymssql sqlalchemy
-
-    # Python package
-    RUN python3 -m pip install --upgrade pip
-    RUN python3 -m pip --no-cache install tornado==5.0.2 && \
-        python3 -m pip --no-cache install pandas && \
-        python3 -m pip --no-cache install numpy && \
-        python3 -m pip --no-cache install scikit-learn
-
-    # MSSQL package
-    RUN python3 -m pip --no-cache install pyodbc pymssql
-
-    RUN groupadd -g 1972 vflow && useradd -g 1972 -u 1972 -m vflow
-    USER 1972:1972
-    WORKDIR /home/vflow
-    ENV HOME=/home/vflow
+    # FROM $com.sap.python36
+    FROM $com.sap.sles.base
+    RUN python3 -m pip install --user pandas
+    RUN python3 -m pip install --user numpy
+    RUN python3 -m pip install --user sklearn
+    RUN python3 -m pip install --user statsmodels
+    RUN python3 -m pip install --user pmdarima
+    RUN python3 -m pip install --user boto3
+    RUN python3 -m pip install --user PyMySQL
 
     3. Write Tags.json
     {
-        "opensuse": "",
-        "python36": "",
-        "tornado": "5.0.2",
-        "z_mssql_py36slim": ""
+        "z_mysql_sles": ""
     }
 
 ## 2. MySQL Pipeline
@@ -59,17 +27,23 @@
 ![](Images/pipeline_readMySQL.png)<br>
 Constant Generator --> Python3(Read MySQL) --> To File --> Write File --> Graph Terminator<br>
 
-Using pymssql
-
     def on_input(data):
-        import pymssql
+        import pymysql
         import pandas as pd
 
-        conn = pymssql.connect(server='xxx.xxx.xxx.xxx', user='userid', password='userpw', database='dbname')
+        conn = pymysql.connect(
+                user='userid', 
+                passwd='userpw', 
+                host='xxx.xxx.xxx.xxx', 
+                port=31725, 
+                db='dbname',
+                charset='utf8'
+        )
 
-        select = 'SELECT * FROM Products;'
+        sql = "select * from QA_EMP"
+
         cursor = conn.cursor()
-        cursor.execute(select)
+        cursor.execute(sql)
         row = cursor.fetchall()
         #print(row)
 
@@ -85,37 +59,6 @@ Using pymssql
         api.send("output", csv)
 
     api.set_port_callback("input", on_input)
-
-
-Using pyodbc
-
-    def on_input(data):
-        import pyodbc
-        import pandas as pd
-
-        # Some other example server values are
-        # server = 'localhost\sqlexpress' # for a named instance
-        # server = 'myserver,port' # to specify an alternate port
-        server = 'xxx.xxx.xxx.xxx,1433'
-        database = 'dbname'
-        username = 'userid'
-        password = 'userpw'
-        conn = pyodbc.connect('DRIVER={FreeTDS};SERVER='+server+';DATABASE='+database+';UID='+username+';PWD='+ password)
-
-        #select = "SELECT @@version;" 
-        select = 'SELECT * FROM Products;'
-
-        # 1. using pandas
-        result = pd.read_sql(select, conn)
-        #print(result)
-
-        conn.close()
-
-        csv = result.to_csv(sep=',', index=False)
-        api.send("output", csv)
-
-    api.set_port_callback("input", on_input)
-
 
 ### 2-2. Ingest Files into MySQL
 ![](Images/pipeline_writeMySQL.png)<br>
