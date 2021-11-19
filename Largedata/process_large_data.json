@@ -1,0 +1,184 @@
+{
+	"properties": {},
+	"iconsrc": "",
+	"description": "Process Large Data1",
+	"processes": {
+		"wiretap1": {
+			"component": "com.sap.util.wiretap",
+			"metadata": {
+				"label": "Wiretap",
+				"x": 454,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"ui": "dynpath",
+				"config": {}
+			}
+		},
+		"structuredfileconsumer1": {
+			"component": "com.sap.storage.consumer.v2",
+			"metadata": {
+				"label": "Structured File Consumer",
+				"x": 17,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 1,
+				"config": {
+					"service": "SDL",
+					"serviceConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "DI_DATA_LAKE"
+					},
+					"source": {
+						"remoteObjectReference": {
+							"connection": {
+								"id": "DI_DATA_LAKE",
+								"type": "SDL"
+							},
+							"name": "bank-full.csv",
+							"remoteObjectType": "FILE.CSV",
+							"qualifiedName": "/shared/Demo/bank-full.csv",
+							"nativeQualifiedName": "/shared/Demo/bank-full.csv",
+							"owner": "ac3927u02",
+							"size": 4610348,
+							"version": {
+								"dataLastModified": 1620012537000,
+								"metadataLastModified": 1620012537000,
+								"metadataVersionNumber": 1620012537000
+							}
+						},
+						"dataAccessConfiguration": {
+							"rowDelimiter": "\n",
+							"charset": "ISO-8859-1",
+							"textDelimiter": "\"",
+							"header": true,
+							"escapeCharacter": "\"",
+							"colDelimiter": ";"
+						},
+						"schema": {
+							"genericType": "TABLE",
+							"tableBasedRepresentation": {
+								"attributes": []
+							}
+						},
+						"capabilityProperties": [
+							{
+								"name": "isProfileable",
+								"value": "true"
+							}
+						],
+						"filter": {
+							"selectOptions": []
+						}
+					},
+					"failOnStringTruncation": false
+				},
+				"outports": [
+					{
+						"name": "outTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.structuredfileconsumer1_outTable"
+					}
+				]
+			}
+		},
+		"python3operator1": {
+			"component": "com.sap.system.python3Operator",
+			"metadata": {
+				"label": "Python3 Operator",
+				"x": 285,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"filesRequired": [
+					"script.py"
+				],
+				"generation": 1,
+				"config": {
+					"script": "import pandas as pd\nimport io\n\ndf = pd.DataFrame()\n\ndef on_input(data):\n    global df\n    \n    body = io.StringIO(data.body)\n    dfchunks = pd.read_csv(body, sep=\",\", header=0)\n    api.send(\"output1\", str(dfchunks.shape))\n    \n    df = df.append(dfchunks, ignore_index=True)\n    api.send(\"output1\", str(df.shape))\n    \n    if data.attributes['message.lastBatch']:\n        api.send(\"output1\", str(df.shape))\n    \napi.set_port_callback(\"input1\", on_input)"
+				},
+				"additionalinports": [
+					{
+						"name": "input1",
+						"type": "message"
+					}
+				],
+				"additionaloutports": [
+					{
+						"name": "output1",
+						"type": "message"
+					}
+				]
+			}
+		},
+		"tabletomessageconverter1": {
+			"component": "com.sap.util.tableToMessageConverter",
+			"metadata": {
+				"label": "Table To Message Converter",
+				"x": 186,
+				"y": 27,
+				"height": 50,
+				"width": 50,
+				"extensible": false,
+				"generation": 1,
+				"config": {},
+				"inports": [
+					{
+						"name": "inTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.structuredfileconsumer1_outTable"
+					}
+				]
+			}
+		}
+	},
+	"groups": [],
+	"connections": [
+		{
+			"metadata": {
+				"points": "409,52 449,52"
+			},
+			"src": {
+				"port": "output1",
+				"process": "python3operator1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "wiretap1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "141,52 181,52"
+			},
+			"src": {
+				"port": "outTable",
+				"process": "structuredfileconsumer1"
+			},
+			"tgt": {
+				"port": "inTable",
+				"process": "tabletomessageconverter1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "240,52 280,52"
+			},
+			"src": {
+				"port": "outMessage",
+				"process": "tabletomessageconverter1"
+			},
+			"tgt": {
+				"port": "input1",
+				"process": "python3operator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
