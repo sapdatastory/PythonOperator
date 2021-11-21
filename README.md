@@ -16,4 +16,6 @@ Python3 Operator의 데이터 처리 예제를 공유합니다.<br>
     - [DB2 Custom Operator Example](Custom/DB2)
     - [MySQL Custom Operator Example](Custom/MySQL)
     - [PostgreSQL Custom Operator Example](Custom/PostgreSQL)
+    - [Teradata Custom Operator Example]
+    - [Vertica Custom Operator Example]
     - [Tibero Custom Operator Example]
