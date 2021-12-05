@@ -6,7 +6,7 @@
 
     1. Input dockerfile path : proj.ora122010
     
-    2. Load file ora122010.zip into Repository
+    2. Import file instantclient-basiclite-linux.x64-12.2.0.1.0.zip into Repository
     
     3. Write Dockerfile
     FROM opensuse/leap:15.1
@@ -30,9 +30,9 @@
          libgthread-2_0-0=2.54.3 \
          libaio
 
-    COPY ora122010.zip /tmp/ora122010.zip
+    COPY  instantclient-basiclite-linux.x64-12.2.0.1.0.zip /tmp/ instantclient-basiclite-linux.x64-12.2.0.1.0.zip
     RUN mkdir -p ${GOROOT} && \
-         unzip /tmp/ora122010.zip -d ${GOROOT}
+         unzip /tmp/ instantclient-basiclite-linux.x64-12.2.0.1.0.zip -d ${GOROOT}
 
     ARG ORACLIENT=/goroot/instantclient_12_2
     ENV LD_LIBRARY_PATH=${ORACLIENT}/lib:${LD_LIBRARY_PATH}
